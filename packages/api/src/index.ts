@@ -89,6 +89,30 @@ app.get('/admin/orders', async () => {
   return orders
 })
 
+// Все заявки (для админ-панели)
+app.get('/admin/orders/all', async () => {
+  const orders = await prisma.order.findMany({
+    include: { user: true, service: true },
+    orderBy: { createdAt: 'desc' },
+  })
+  return orders
+})
+
+// Профиль пользователя со всеми заявками (для админ-панели)
+app.get('/admin/users/:telegramId', async (request) => {
+  const { telegramId } = request.params as any
+  const user = await prisma.user.findUnique({
+    where: { telegramId: String(telegramId) },
+    include: {
+      orders: {
+        include: { service: true },
+        orderBy: { createdAt: 'desc' },
+      },
+    },
+  })
+  return user
+})
+
 // Обновить статус заявки (для бота)
 app.patch('/admin/orders/:id/status', async (request) => {
   const { id } = request.params as any
