@@ -15,10 +15,6 @@ export default function WelcomePage({ onDone }: { onDone: () => void }) {
   return (
     <div className={`welcome-screen ${fadeOut ? 'fade-out' : ''}`}>
       <div className={`welcome-content ${visible ? 'visible' : ''}`}>
-        <div className="welcome-logo">
-          <span className="logo-sp">Sp</span>
-          <span className="logo-s-mirror">S</span>
-        </div>
         <div className="welcome-text">Добро пожаловать в<br /><span className="welcome-brand">Subpay Service</span>!</div>
       </div>
     </div>
