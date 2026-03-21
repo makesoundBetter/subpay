@@ -246,6 +246,52 @@ async function main() {
   await prisma.service.upsert({ where: { id: 68 }, update: {}, create: { id: 68, categoryId: education.id, name: 'Quizlet Plus', prices: { create: [{ duration: '1 месяц', basePrice: 7, commission: 1, total: 8 }, { duration: '1 год', basePrice: 33, commission: 7, total: 40 }] } } })
   await prisma.service.upsert({ where: { id: 69 }, update: {}, create: { id: 69, categoryId: education.id, name: 'itch.io', prices: { create: [{ duration: 'Оплата', basePrice: 13, commission: 2, total: 15 }] } } })
 
+  const streaming = await prisma.category.upsert({
+    where: { slug: 'streaming' },
+    update: {},
+    create: { name: 'Стриминг', slug: 'streaming', emoji: '🎬' },
+  })
+
+  const gaming = await prisma.category.upsert({
+    where: { slug: 'gaming' },
+    update: {},
+    create: { name: 'Игры', slug: 'gaming', emoji: '🎮' },
+  })
+
+  // Streaming (ids 72-81)
+  await prisma.service.upsert({ where: { id: 72 }, update: {}, create: { id: 72, categoryId: streaming.id, name: 'Netflix', prices: { create: [{ duration: '1 месяц', basePrice: 17, commission: 3, total: 20 }, { duration: '3 месяца', basePrice: 47, commission: 8, total: 55 }, { duration: '1 год', basePrice: 170, commission: 30, total: 200 }] } } })
+  await prisma.service.upsert({ where: { id: 73 }, update: {}, create: { id: 73, categoryId: streaming.id, name: 'Disney+', prices: { create: [{ duration: '1 месяц', basePrice: 10, commission: 2, total: 12 }, { duration: '3 месяца', basePrice: 28, commission: 4, total: 32 }, { duration: '1 год', basePrice: 96, commission: 14, total: 110 }] } } })
+  await prisma.service.upsert({ where: { id: 74 }, update: {}, create: { id: 74, categoryId: streaming.id, name: 'HBO Max', prices: { create: [{ duration: '1 месяц', basePrice: 13, commission: 2, total: 15 }, { duration: '3 месяца', basePrice: 35, commission: 5, total: 40 }, { duration: '1 год', basePrice: 122, commission: 18, total: 140 }] } } })
+  await prisma.service.upsert({ where: { id: 75 }, update: {}, create: { id: 75, categoryId: streaming.id, name: 'Apple TV+', prices: { create: [{ duration: '1 месяц', basePrice: 10, commission: 2, total: 12 }, { duration: '1 год', basePrice: 100, commission: 20, total: 120 }] } } })
+  await prisma.service.upsert({ where: { id: 76 }, update: {}, create: { id: 76, categoryId: streaming.id, name: 'Crunchyroll', prices: { create: [{ duration: '1 месяц', basePrice: 8, commission: 2, total: 10 }, { duration: '3 месяца', basePrice: 23, commission: 4, total: 27 }, { duration: '1 год', basePrice: 83, commission: 12, total: 95 }] } } })
+  await prisma.service.upsert({ where: { id: 77 }, update: {}, create: { id: 77, categoryId: streaming.id, name: 'Kinopoisk HD', prices: { create: [{ duration: '1 месяц', basePrice: 4, commission: 1, total: 5 }, { duration: '3 месяца', basePrice: 11, commission: 2, total: 13 }, { duration: '1 год', basePrice: 39, commission: 6, total: 45 }] } } })
+  await prisma.service.upsert({ where: { id: 78 }, update: {}, create: { id: 78, categoryId: streaming.id, name: 'Amazon Prime', prices: { create: [{ duration: '1 месяц', basePrice: 10, commission: 2, total: 12 }, { duration: '1 год', basePrice: 100, commission: 15, total: 115 }] } } })
+  await prisma.service.upsert({ where: { id: 79 }, update: {}, create: { id: 79, categoryId: streaming.id, name: 'Apple Music', prices: { create: [{ duration: '1 месяц', basePrice: 10, commission: 2, total: 12 }, { duration: '1 год', basePrice: 100, commission: 15, total: 115 }] } } })
+  await prisma.service.upsert({ where: { id: 80 }, update: {}, create: { id: 80, categoryId: streaming.id, name: 'Tidal', prices: { create: [{ duration: '1 месяц', basePrice: 10, commission: 2, total: 12 }, { duration: '1 год', basePrice: 100, commission: 15, total: 115 }] } } })
+  await prisma.service.upsert({ where: { id: 81 }, update: {}, create: { id: 81, categoryId: streaming.id, name: 'Deezer', prices: { create: [{ duration: '1 месяц', basePrice: 8, commission: 2, total: 10 }, { duration: '1 год', basePrice: 83, commission: 12, total: 95 }] } } })
+
+  // Gaming (ids 82-86)
+  await prisma.service.upsert({ where: { id: 82 }, update: {}, create: { id: 82, categoryId: gaming.id, name: 'Xbox Game Pass', prices: { create: [{ duration: '1 месяц', basePrice: 15, commission: 3, total: 18 }, { duration: '3 месяца', basePrice: 44, commission: 6, total: 50 }] } } })
+  await prisma.service.upsert({ where: { id: 83 }, update: {}, create: { id: 83, categoryId: gaming.id, name: 'PlayStation Plus', prices: { create: [{ duration: '1 месяц', basePrice: 15, commission: 3, total: 18 }, { duration: '3 месяца', basePrice: 44, commission: 6, total: 50 }, { duration: '1 год', basePrice: 155, commission: 25, total: 180 }] } } })
+  await prisma.service.upsert({ where: { id: 84 }, update: {}, create: { id: 84, categoryId: gaming.id, name: 'EA Play', prices: { create: [{ duration: '1 месяц', basePrice: 7, commission: 1, total: 8 }, { duration: '1 год', basePrice: 70, commission: 10, total: 80 }] } } })
+  await prisma.service.upsert({ where: { id: 85 }, update: {}, create: { id: 85, categoryId: gaming.id, name: 'Nintendo Switch', prices: { create: [{ duration: '3 месяца', basePrice: 10, commission: 2, total: 12 }, { duration: '1 год', basePrice: 33, commission: 5, total: 38 }] } } })
+  await prisma.service.upsert({ where: { id: 86 }, update: {}, create: { id: 86, categoryId: gaming.id, name: 'Epic Games', prices: { create: [{ duration: '$10 баланс', basePrice: 10, commission: 2, total: 12 }, { duration: '$25 баланс', basePrice: 25, commission: 3, total: 28 }, { duration: '$50 баланс', basePrice: 50, commission: 5, total: 55 }] } } })
+
+  // Dev additions (ids 90-92)
+  await prisma.service.upsert({ where: { id: 90 }, update: {}, create: { id: 90, categoryId: dev.id, name: 'GitHub Copilot', prices: { create: [{ duration: '1 месяц', basePrice: 10, commission: 2, total: 12 }, { duration: '1 год', basePrice: 100, commission: 15, total: 115 }] } } })
+  await prisma.service.upsert({ where: { id: 91 }, update: {}, create: { id: 91, categoryId: dev.id, name: 'Vercel Pro', prices: { create: [{ duration: '1 месяц', basePrice: 19, commission: 3, total: 22 }, { duration: '1 год', basePrice: 190, commission: 30, total: 220 }] } } })
+  await prisma.service.upsert({ where: { id: 92 }, update: {}, create: { id: 92, categoryId: dev.id, name: 'DigitalOcean', prices: { create: [{ duration: '$10 кредиты', basePrice: 10, commission: 2, total: 12 }, { duration: '$50 кредиты', basePrice: 50, commission: 8, total: 58 }] } } })
+
+  // Home additions (ids 93-95)
+  await prisma.service.upsert({ where: { id: 93 }, update: {}, create: { id: 93, categoryId: home.id, name: 'ExpressVPN', prices: { create: [{ duration: '1 месяц', basePrice: 13, commission: 2, total: 15 }, { duration: '1 год', basePrice: 70, commission: 10, total: 80 }] } } })
+  await prisma.service.upsert({ where: { id: 94 }, update: {}, create: { id: 94, categoryId: home.id, name: 'ProtonVPN', prices: { create: [{ duration: '1 месяц', basePrice: 10, commission: 2, total: 12 }, { duration: '1 год', basePrice: 48, commission: 7, total: 55 }] } } })
+  await prisma.service.upsert({ where: { id: 95 }, update: {}, create: { id: 95, categoryId: home.id, name: 'Bitwarden', prices: { create: [{ duration: '1 год', basePrice: 10, commission: 2, total: 12 }] } } })
+
+  // Education additions (ids 87-89)
+  await prisma.service.upsert({ where: { id: 87 }, update: {}, create: { id: 87, categoryId: education.id, name: 'Notion', prices: { create: [{ duration: '1 месяц', basePrice: 10, commission: 2, total: 12 }, { duration: '1 год', basePrice: 100, commission: 15, total: 115 }] } } })
+  await prisma.service.upsert({ where: { id: 88 }, update: {}, create: { id: 88, categoryId: education.id, name: 'Grammarly', prices: { create: [{ duration: '1 месяц', basePrice: 13, commission: 2, total: 15 }, { duration: '1 год', basePrice: 122, commission: 18, total: 140 }] } } })
+  await prisma.service.upsert({ where: { id: 89 }, update: {}, create: { id: 89, categoryId: education.id, name: 'Todoist Pro', prices: { create: [{ duration: '1 месяц', basePrice: 4, commission: 1, total: 5 }, { duration: '1 год', basePrice: 41, commission: 7, total: 48 }] } } })
+
   // Payment (ids 70-71)
   await prisma.service.upsert({ where: { id: 70 }, update: {}, create: { id: 70, categoryId: payment.id, name: 'Любой сервис', prices: { create: [{ duration: 'До $50', basePrice: 46, commission: 9, total: 55 }, { duration: 'До $100', basePrice: 90, commission: 18, total: 108 }, { duration: 'До $200', basePrice: 179, commission: 36, total: 215 }] } } })
   await prisma.service.upsert({ where: { id: 71 }, update: {}, create: { id: 71, categoryId: payment.id, name: 'Stripe', prices: { create: [{ duration: 'Оплата', basePrice: 21, commission: 4, total: 25 }] } } })

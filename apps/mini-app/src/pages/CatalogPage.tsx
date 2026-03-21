@@ -5,6 +5,8 @@ const G = (domain: string) => `https://www.google.com/s2/favicons?domain=${domai
 
 const CATEGORIES = [
   { slug: 'ai', name: '🤖 ИИ-сервисы' },
+  { slug: 'streaming', name: '🎬 Стриминг' },
+  { slug: 'gaming', name: '🎮 Игры' },
   { slug: 'social', name: '📱 Соц. сети' },
   { slug: 'design', name: '🎨 Дизайн' },
   { slug: 'dev', name: '💻 Разработка' },
@@ -38,6 +40,27 @@ const SERVICES: SelectedService[] = [
   { id: 23, name: 'NanoBanana',           category: 'ai', icon: G('nanobanana.io'),      prices: [{ duration: '1 месяц', total: 12 }] },
   { id: 3,  name: 'Midjourney',           category: 'ai', icon: G('midjourney.com'),     prices: [{ duration: '1 месяц', total: 15 }, { duration: '3 месяца', total: 40 }] },
 
+  // Стриминг и музыка
+  { id: 72, name: 'Netflix',            category: 'streaming', icon: G('netflix.com'),        prices: [{ duration: '1 месяц', total: 20 }, { duration: '3 месяца', total: 55 }, { duration: '1 год', total: 200 }] },
+  { id: 73, name: 'Disney+',            category: 'streaming', icon: G('disneyplus.com'),     prices: [{ duration: '1 месяц', total: 12 }, { duration: '3 месяца', total: 32 }, { duration: '1 год', total: 110 }] },
+  { id: 74, name: 'HBO Max',            category: 'streaming', icon: G('max.com'),            prices: [{ duration: '1 месяц', total: 15 }, { duration: '3 месяца', total: 40 }, { duration: '1 год', total: 140 }] },
+  { id: 75, name: 'Apple TV+',          category: 'streaming', icon: G('tv.apple.com'),       prices: [{ duration: '1 месяц', total: 12 }, { duration: '1 год', total: 120 }] },
+  { id: 76, name: 'Crunchyroll',        category: 'streaming', icon: G('crunchyroll.com'),    prices: [{ duration: '1 месяц', total: 10 }, { duration: '3 месяца', total: 27 }, { duration: '1 год', total: 95 }] },
+  { id: 77, name: 'Kinopoisk HD',       category: 'streaming', icon: G('kinopoisk.ru'),       prices: [{ duration: '1 месяц', total: 5 }, { duration: '3 месяца', total: 13 }, { duration: '1 год', total: 45 }] },
+  { id: 78, name: 'Amazon Prime',       category: 'streaming', icon: G('primevideo.com'),     prices: [{ duration: '1 месяц', total: 12 }, { duration: '1 год', total: 115 }] },
+  { id: 5,  name: 'Spotify',            category: 'streaming', icon: G('spotify.com'),        prices: [{ duration: '1 месяц', total: 8 }, { duration: '3 месяца', total: 22 }, { duration: '1 год', total: 80 }] },
+  { id: 79, name: 'Apple Music',        category: 'streaming', icon: G('music.apple.com'),    prices: [{ duration: '1 месяц', total: 12 }, { duration: '1 год', total: 115 }] },
+  { id: 80, name: 'Tidal',              category: 'streaming', icon: G('tidal.com'),          prices: [{ duration: '1 месяц', total: 12 }, { duration: '1 год', total: 115 }] },
+  { id: 81, name: 'Deezer',             category: 'streaming', icon: G('deezer.com'),         prices: [{ duration: '1 месяц', total: 10 }, { duration: '1 год', total: 95 }] },
+
+  // Игры
+  { id: 82, name: 'Xbox Game Pass',     category: 'gaming', icon: G('xbox.com'),             prices: [{ duration: '1 месяц', total: 18 }, { duration: '3 месяца', total: 50 }] },
+  { id: 83, name: 'PlayStation Plus',   category: 'gaming', icon: G('playstation.com'),      prices: [{ duration: '1 месяц', total: 18 }, { duration: '3 месяца', total: 50 }, { duration: '1 год', total: 180 }] },
+  { id: 84, name: 'EA Play',            category: 'gaming', icon: G('ea.com'),               prices: [{ duration: '1 месяц', total: 8 }, { duration: '1 год', total: 80 }] },
+  { id: 85, name: 'Nintendo Switch',    category: 'gaming', icon: G('nintendo.com'),         prices: [{ duration: '3 месяца', total: 12 }, { duration: '1 год', total: 38 }] },
+  { id: 86, name: 'Epic Games',         category: 'gaming', icon: G('epicgames.com'),        prices: [{ duration: '$10 баланс', total: 12 }, { duration: '$25 баланс', total: 28 }, { duration: '$50 баланс', total: 55 }] },
+  { id: 6,  name: 'Steam',              category: 'gaming', icon: G('store.steampowered.com'), prices: [{ duration: '$10 баланс', total: 12 }, { duration: '$25 баланс', total: 28 }] },
+
   // Социальные сети
   { id: 24, name: 'TikTok',              category: 'social', icon: G('tiktok.com'),      prices: [{ duration: '1 месяц', total: 8 }] },
   { id: 25, name: 'Patreon',             category: 'social', icon: G('patreon.com'),     prices: [{ duration: '1 месяц', total: 8 }, { duration: '3 месяца', total: 22 }] },
@@ -68,6 +91,9 @@ const SERVICES: SelectedService[] = [
   { id: 46, name: 'Obsidian',          category: 'dev', icon: G('obsidian.md'),          prices: [{ duration: '1 месяц', total: 10 }, { duration: '1 год', total: 100 }] },
   { id: 47, name: 'Xsolla',            category: 'dev', icon: G('xsolla.com'),           prices: [{ duration: '1 месяц', total: 15 }] },
   { id: 48, name: 'Exaroton',          category: 'dev', icon: G('exaroton.com'),         prices: [{ duration: '1 месяц', total: 12 }] },
+  { id: 90, name: 'GitHub Copilot',    category: 'dev', icon: G('github.com'),           prices: [{ duration: '1 месяц', total: 12 }, { duration: '1 год', total: 115 }] },
+  { id: 91, name: 'Vercel Pro',        category: 'dev', icon: G('vercel.com'),           prices: [{ duration: '1 месяц', total: 22 }, { duration: '1 год', total: 220 }] },
+  { id: 92, name: 'DigitalOcean',      category: 'dev', icon: G('digitalocean.com'),     prices: [{ duration: '$10 кредиты', total: 12 }, { duration: '$50 кредиты', total: 58 }] },
 
   // Облачные сервисы
   { id: 49, name: 'Google Workspace',  category: 'cloud', icon: G('workspace.google.com'), prices: [{ duration: '1 месяц', total: 10 }, { duration: '1 год', total: 100 }] },
@@ -91,6 +117,9 @@ const SERVICES: SelectedService[] = [
   { id: 63, name: 'iCloud+',          category: 'home', icon: G('icloud.com'),           prices: [{ duration: '1 месяц', total: 5 }, { duration: '1 год', total: 50 }] },
   { id: 64, name: 'Surfshark',        category: 'home', icon: G('surfshark.com'),        prices: [{ duration: '1 месяц', total: 10 }, { duration: '1 год', total: 40 }] },
   { id: 65, name: 'Dropbox',          category: 'home', icon: G('dropbox.com'),          prices: [{ duration: '1 месяц', total: 12 }, { duration: '1 год', total: 120 }] },
+  { id: 93, name: 'ExpressVPN',       category: 'home', icon: G('expressvpn.com'),       prices: [{ duration: '1 месяц', total: 15 }, { duration: '1 год', total: 80 }] },
+  { id: 94, name: 'ProtonVPN',        category: 'home', icon: G('protonvpn.com'),        prices: [{ duration: '1 месяц', total: 12 }, { duration: '1 год', total: 55 }] },
+  { id: 95, name: 'Bitwarden',        category: 'home', icon: G('bitwarden.com'),        prices: [{ duration: '1 год', total: 12 }] },
 
   // Обучение / игры
   { id: 4,  name: 'Duolingo Plus',    category: 'education', icon: G('duolingo.com'),    prices: [{ duration: '1 месяц', total: 10 }, { duration: '1 год', total: 80 }] },
@@ -98,7 +127,9 @@ const SERVICES: SelectedService[] = [
   { id: 67, name: 'Chess.com',        category: 'education', icon: G('chess.com'),       prices: [{ duration: '1 месяц', total: 5 }, { duration: '1 год', total: 50 }] },
   { id: 68, name: 'Quizlet Plus',     category: 'education', icon: G('quizlet.com'),     prices: [{ duration: '1 месяц', total: 8 }, { duration: '1 год', total: 40 }] },
   { id: 69, name: 'itch.io',          category: 'education', icon: G('itch.io'),         prices: [{ duration: 'Оплата', total: 15 }] },
-  { id: 6,  name: 'Steam',            category: 'education', icon: G('store.steampowered.com'), prices: [{ duration: '$10 баланс', total: 12 }, { duration: '$25 баланс', total: 28 }] },
+  { id: 87, name: 'Notion',           category: 'education', icon: G('notion.so'),       prices: [{ duration: '1 месяц', total: 12 }, { duration: '1 год', total: 115 }] },
+  { id: 88, name: 'Grammarly',        category: 'education', icon: G('grammarly.com'),   prices: [{ duration: '1 месяц', total: 15 }, { duration: '1 год', total: 140 }] },
+  { id: 89, name: 'Todoist Pro',      category: 'education', icon: G('todoist.com'),     prices: [{ duration: '1 месяц', total: 5 }, { duration: '1 год', total: 48 }] },
 
   // Оплата зарубежных сервисов
   { id: 70, name: 'Любой сервис',     category: 'payment', icon: G('paypal.com'),        prices: [{ duration: 'До $50', total: 55 }, { duration: 'До $100', total: 108 }, { duration: 'До $200', total: 215 }] },
