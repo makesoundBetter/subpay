@@ -18,14 +18,12 @@ app.get('/health', async () => {
 app.post('/orders', async (request, reply) => {
   const { telegramId, firstName, username, serviceId, serviceName, duration, totalPrice } = request.body as any
 
-  // Найти или создать пользователя
   const user = await prisma.user.upsert({
     where: { telegramId: String(telegramId) },
     update: { username, firstName },
     create: { telegramId: String(telegramId), firstName, username },
   })
 
-  // Создать заявку
   const order = await prisma.order.create({
     data: {
       userId: user.id,
@@ -36,18 +34,25 @@ app.post('/orders', async (request, reply) => {
     },
   })
 
-  // Уведомить админа через бота
   const adminId = process.env.ADMIN_TELEGRAM_ID
   if (adminId) {
     try {
       await bot.api.sendMessage(
         adminId,
         `📦 *Новая заявка #${order.id}*\n\n` +
-        `👤 Тип: ${firstName}${username ? ` (@${username})` : ''}\n` +
+        `👤 ${firstName}${username ? ` (@${username})` : ''}\n` +
         `📱 Сервис: ${serviceName}\n` +
         `⏱ Период: ${duration}\n` +
         `💰 Сумма: $${totalPrice}`,
-        { parse_mode: 'Markdown' }
+        {
+          parse_mode: 'Markdown',
+          reply_markup: {
+            inline_keyboard: [[
+              { text: '⚙️ В работу', callback_data: `process_${order.id}` },
+              { text: '❌ Отменить', callback_data: `cancel_${order.id}` },
+            ]]
+          }
+        }
       )
     } catch (e) {
       app.log.error('Failed to send Telegram notification: ' + e)
@@ -71,6 +76,30 @@ app.get('/orders/:telegramId', async (request) => {
   })
 
   return user?.orders ?? []
+})
+
+// Получить активные заявки (для бота)
+app.get('/admin/orders', async () => {
+  const orders = await prisma.order.findMany({
+    where: { status: { in: ['NEW', 'PROCESSING', 'AWAITING_PAYMENT'] } },
+    include: { user: true, service: true },
+    orderBy: { createdAt: 'desc' },
+  })
+  return orders
+})
+
+// Обновить статус заявки (для бота)
+app.patch('/admin/orders/:id/status', async (request) => {
+  const { id } = request.params as any
+  const { status } = request.body as any
+
+  const order = await prisma.order.update({
+    where: { id: parseInt(id) },
+    data: { status },
+    include: { user: true, service: true },
+  })
+
+  return order
 })
 
 const start = async () => {
