@@ -1,0 +1,300 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #0f0f0f;
+  color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  min-height: 100vh;
+}
+
+.app {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+.page {
+  padding: 16px;
+  min-height: 100vh;
+}
+
+.page.center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.orders-btn {
+  background: #1e1e1e;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.categories {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+  scrollbar-width: none;
+}
+
+.cat-btn {
+  background: #1e1e1e;
+  color: #aaa;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.cat-btn.active {
+  background: #3b82f6;
+  color: #fff;
+}
+
+.services {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.service-card {
+  background: #1e1e1e;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.service-card:hover {
+  background: #2a2a2a;
+}
+
+.service-emoji {
+  font-size: 32px;
+}
+
+.service-emoji.large {
+  font-size: 56px;
+}
+
+.service-info {
+  flex: 1;
+}
+
+.service-name {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.service-price {
+  font-size: 14px;
+  color: #aaa;
+  margin-top: 2px;
+}
+
+.arrow {
+  font-size: 20px;
+  color: #555;
+}
+
+.back-header {
+  margin-bottom: 20px;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.order-service {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.order-service h2 {
+  margin-top: 8px;
+  font-size: 22px;
+}
+
+.section-title {
+  font-size: 14px;
+  color: #aaa;
+  margin-bottom: 10px;
+}
+
+.prices {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.price-card {
+  background: #1e1e1e;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.price-card.active {
+  border-color: #3b82f6;
+  background: #1a2a3f;
+}
+
+.price-amount {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.order-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: #1e1e1e;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.total-amount {
+  font-size: 22px;
+  font-weight: 700;
+  color: #3b82f6;
+}
+
+.btn-primary {
+  width: 100%;
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  padding: 16px;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background: #2563eb;
+}
+
+.order-note {
+  margin-top: 16px;
+  font-size: 13px;
+  color: #666;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.success-icon {
+  font-size: 64px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 80px;
+  color: #555;
+}
+
+.empty-icon {
+  font-size: 48px;
+}
+
+.error-msg {
+  color: #ef4444;
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.loading-text {
+  text-align: center;
+  color: #aaa;
+  margin-top: 40px;
+}
+
+.order-card {
+  background: #1e1e1e;
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.order-card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.order-id {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.order-status {
+  font-size: 13px;
+}
+
+.order-duration {
+  font-size: 14px;
+  color: #aaa;
+}
+
+.order-price {
+  font-size: 16px;
+  font-weight: 700;
+  color: #3b82f6;
+}
+
+.order-date {
+  font-size: 12px;
+  color: #555;
+}
