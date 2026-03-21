@@ -77,7 +77,7 @@ bot.command('start', (ctx) => ctx.reply(
   {
     reply_markup: {
       inline_keyboard: [[
-        { text: '🚀 Открыть Subpay', web_app: { url: 'https://subpay-mini-app.vercel.app?v=2' } }
+        { text: '🚀 Открыть Subpay', web_app: { url: 'https://subpay-mini-app.vercel.app' } }
       ]]
     }
   }
