@@ -60,39 +60,41 @@ export default function OrderPage({ service, onBack }: Props) {
         <button className="back-btn" onClick={onBack}>← Назад</button>
       </div>
 
-      <div className="order-service">
-        <img className="order-service-icon" src={service.icon} alt={service.name} />
-        <h2>{service.name}</h2>
+      <div className="order-page-scroll">
+        <div className="order-service">
+          <img className="order-service-icon" src={service.icon} alt={service.name} />
+          <h2>{service.name}</h2>
+        </div>
+
+        <div className="section-title">Выберите период</div>
+        <div className="prices">
+          {service.prices.map(price => (
+            <div
+              key={price.duration}
+              className={`price-card ${selectedPrice.duration === price.duration ? 'active' : ''}`}
+              onClick={() => setSelectedPrice(price)}
+            >
+              <span>{price.duration}</span>
+              <span className="price-amount">${price.total}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="order-total">
+          <span>Итого:</span>
+          <span className="total-amount">${selectedPrice.total}</span>
+        </div>
+
+        {error && <p className="error-msg">{error}</p>}
+
+        <button className="btn-primary" onClick={handleSubmit} disabled={loading}>
+          {loading ? 'Отправляем...' : 'Отправить заявку'}
+        </button>
+
+        <p className="order-note">
+          После отправки заявки менеджер свяжется с вами, уточнит детали и пришлёт реквизиты для оплаты.
+        </p>
       </div>
-
-      <div className="section-title">Выберите период</div>
-      <div className="prices">
-        {service.prices.map(price => (
-          <div
-            key={price.duration}
-            className={`price-card ${selectedPrice.duration === price.duration ? 'active' : ''}`}
-            onClick={() => setSelectedPrice(price)}
-          >
-            <span>{price.duration}</span>
-            <span className="price-amount">${price.total}</span>
-          </div>
-        ))}
-      </div>
-
-      <div className="order-total">
-        <span>Итого:</span>
-        <span className="total-amount">${selectedPrice.total}</span>
-      </div>
-
-      {error && <p className="error-msg">{error}</p>}
-
-      <button className="btn-primary" onClick={handleSubmit} disabled={loading}>
-        {loading ? 'Отправляем...' : 'Отправить заявку'}
-      </button>
-
-      <p className="order-note">
-        После отправки заявки менеджер свяжется с вами, уточнит детали и пришлёт реквизиты для оплаты.
-      </p>
     </div>
   )
 }

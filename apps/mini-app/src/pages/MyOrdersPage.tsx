@@ -56,21 +56,23 @@ export default function MyOrdersPage({ onBack }: Props) {
         </div>
       )}
 
-      {orders.map(order => (
-        <div key={order.id} className="order-card">
-          <div className="order-card-row">
-            <span className="order-id">Заявка #{order.id}</span>
-            <span className="order-status">{STATUS_LABELS[order.status] ?? order.status}</span>
+      <div className="orders-list">
+        {orders.map(order => (
+          <div key={order.id} className="order-card">
+            <div className="order-card-row">
+              <span className="order-id">Заявка #{order.id}</span>
+              <span className="order-status">{STATUS_LABELS[order.status] ?? order.status}</span>
+            </div>
+            <div className="order-card-row">
+              <span className="order-duration">{order.service?.name ?? `Сервис #${order.serviceId}`} · {order.duration}</span>
+              <span className="order-price">${order.totalPrice}</span>
+            </div>
+            <div className="order-date">
+              {new Date(order.createdAt).toLocaleDateString('ru-RU')}
+            </div>
           </div>
-          <div className="order-card-row">
-            <span className="order-duration">{order.service?.name ?? `Сервис #${order.serviceId}`} · {order.duration}</span>
-            <span className="order-price">${order.totalPrice}</span>
-          </div>
-          <div className="order-date">
-            {new Date(order.createdAt).toLocaleDateString('ru-RU')}
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   )
 }
