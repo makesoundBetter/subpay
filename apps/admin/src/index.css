@@ -2,8 +2,8 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: #f5f5f5;
-  color: #1a1a1a;
+  background: #0a0a0a;
+  color: #f0f0f0;
 }
 
 .layout {
@@ -18,7 +18,7 @@ h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
 .back-btn {
   background: none;
   border: none;
-  color: #2563eb;
+  color: #60a5fa;
   cursor: pointer;
   font-size: 14px;
   margin-bottom: 16px;
@@ -28,11 +28,11 @@ h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
 .back-btn:hover { text-decoration: underline; }
 
 .card {
-  background: white;
+  background: #1a1a1a;
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 16px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  border: 1px solid #2a2a2a;
 }
 
 .stat-row {
@@ -43,35 +43,36 @@ h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
 }
 
 .stat {
-  background: white;
+  background: #1a1a1a;
   border-radius: 10px;
   padding: 16px 20px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  border: 1px solid #2a2a2a;
   min-width: 110px;
 }
-.stat-value { font-size: 28px; font-weight: 700; }
-.stat-label { font-size: 13px; color: #6b7280; margin-top: 2px; }
+.stat-value { font-size: 28px; font-weight: 700; color: #fff; }
+.stat-label { font-size: 13px; color: #888; margin-top: 2px; }
 
 .orders-table { width: 100%; border-collapse: collapse; }
 .orders-table th {
   text-align: left;
   font-size: 12px;
   font-weight: 600;
-  color: #6b7280;
+  color: #888;
   text-transform: uppercase;
   padding: 8px 12px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #2a2a2a;
 }
 .orders-table td {
   padding: 12px;
-  border-bottom: 1px solid #f3f4f6;
+  border-bottom: 1px solid #1f1f1f;
   font-size: 14px;
   vertical-align: middle;
+  color: #e0e0e0;
 }
-.orders-table tr:hover td { background: #f9fafb; cursor: pointer; }
+.orders-table tr:hover td { background: #222; cursor: pointer; }
 
-.user-name { font-weight: 600; }
-.user-meta { font-size: 12px; color: #6b7280; margin-top: 2px; }
+.user-name { font-weight: 600; color: #fff; }
+.user-meta { font-size: 12px; color: #888; margin-top: 2px; }
 
 .status-badge {
   display: inline-block;
@@ -81,31 +82,26 @@ h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
   font-weight: 500;
   white-space: nowrap;
 }
-.status-NEW { background: #dbeafe; color: #1d4ed8; }
-.status-PROCESSING { background: #fef3c7; color: #92400e; }
-.status-AWAITING_PAYMENT { background: #ede9fe; color: #5b21b6; }
-.status-PAID { background: #d1fae5; color: #065f46; }
-.status-COMPLETED { background: #d1fae5; color: #065f46; }
-.status-CANCELLED { background: #fee2e2; color: #991b1b; }
+.status-NEW { background: #1e3a5f; color: #93c5fd; }
+.status-PROCESSING { background: #3d2c00; color: #fcd34d; }
+.status-AWAITING_PAYMENT { background: #2d1b69; color: #c4b5fd; }
+.status-PAID { background: #064e3b; color: #6ee7b7; }
+.status-COMPLETED { background: #064e3b; color: #6ee7b7; }
+.status-CANCELLED { background: #450a0a; color: #fca5a5; }
 
 .select-status {
   padding: 4px 8px;
   border-radius: 6px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #3a3a3a;
   font-size: 13px;
   cursor: pointer;
-  background: white;
+  background: #2a2a2a;
+  color: #e0e0e0;
 }
 
-.loading { text-align: center; color: #6b7280; padding: 48px; }
-.error-msg { color: #dc2626; padding: 16px; }
+.loading { text-align: center; color: #888; padding: 48px; }
+.error-msg { color: #fca5a5; padding: 16px; }
 
-.user-profile-card {
-  display: flex;
-  gap: 24px;
-  flex-wrap: wrap;
-  align-items: flex-start;
-}
 .user-profile-field { margin-bottom: 12px; }
-.user-profile-field label { font-size: 12px; color: #6b7280; display: block; margin-bottom: 2px; }
-.user-profile-field span { font-size: 15px; font-weight: 500; }
+.user-profile-field label { font-size: 12px; color: #888; display: block; margin-bottom: 2px; }
+.user-profile-field span { font-size: 15px; font-weight: 500; color: #fff; }
