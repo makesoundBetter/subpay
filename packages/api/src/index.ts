@@ -39,15 +39,19 @@ app.post('/orders', async (request, reply) => {
   // Уведомить админа через бота
   const adminId = process.env.ADMIN_TELEGRAM_ID
   if (adminId) {
-    await bot.api.sendMessage(
-      adminId,
-      `📦 *Новая заявка #${order.id}*\n\n` +
-      `👤 Тип: ${firstName}${username ? ` (@${username})` : ''}\n` +
-      `📱 Сервис: ${serviceName}\n` +
-      `⏱ Период: ${duration}\n` +
-      `💰 Сумма: $${totalPrice}`,
-      { parse_mode: 'Markdown' }
-    )
+    try {
+      await bot.api.sendMessage(
+        adminId,
+        `📦 *Новая заявка #${order.id}*\n\n` +
+        `👤 Тип: ${firstName}${username ? ` (@${username})` : ''}\n` +
+        `📱 Сервис: ${serviceName}\n` +
+        `⏱ Период: ${duration}\n` +
+        `💰 Сумма: $${totalPrice}`,
+        { parse_mode: 'Markdown' }
+      )
+    } catch (e) {
+      app.log.error('Failed to send Telegram notification: ' + e)
+    }
   }
 
   return { success: true, orderId: order.id }
