@@ -35,7 +35,6 @@ app.post('/orders', async (request, reply) => {
   })
 
   const adminId = process.env.ADMIN_TELEGRAM_ID
-  console.log('Sending notification to adminId:', adminId)
   if (adminId) {
     try {
       await bot.api.sendMessage(
@@ -55,9 +54,8 @@ app.post('/orders', async (request, reply) => {
           }
         }
       )
-      console.log('Notification sent successfully')
     } catch (e) {
-      console.error('Failed to send Telegram notification:', e)
+      app.log.error('Failed to send Telegram notification: ' + e)
     }
   }
 
@@ -73,6 +71,7 @@ app.get('/orders/:telegramId', async (request) => {
     include: {
       orders: {
         orderBy: { createdAt: 'desc' },
+        include: { service: true },
       },
     },
   })

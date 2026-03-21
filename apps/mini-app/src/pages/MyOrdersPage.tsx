@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 type Order = {
   id: number
   serviceId: number
+  service?: { name: string }
   duration: string
   totalPrice: number
   status: string
@@ -62,7 +63,7 @@ export default function MyOrdersPage({ onBack }: Props) {
             <span className="order-status">{STATUS_LABELS[order.status] ?? order.status}</span>
           </div>
           <div className="order-card-row">
-            <span className="order-duration">{order.duration}</span>
+            <span className="order-duration">{order.service?.name ?? `Сервис #${order.serviceId}`} · {order.duration}</span>
             <span className="order-price">${order.totalPrice}</span>
           </div>
           <div className="order-date">
