@@ -26,7 +26,7 @@ function LoginPage({ onLogin }: { onLogin: () => void }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
       <div className="card" style={{ width: 320 }}>
-        <h2 style={{ marginBottom: 20 }}>Subpay Admin</h2>
+        <h2 style={{ marginBottom: 20 }}>Subpay Service Admin</h2>
         <input
           type="password"
           placeholder="Пароль"

@@ -149,7 +149,7 @@ export default function CatalogPage({ onSelectService, onGoToOrders }: Props) {
   return (
     <div className="page">
       <div className="header">
-        <h1>Subpay</h1>
+        <h1>Subpay Service</h1>
         <button className="orders-btn" onClick={onGoToOrders}>Мои заявки</button>
       </div>
 

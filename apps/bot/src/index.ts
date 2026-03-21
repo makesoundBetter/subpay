@@ -23,7 +23,7 @@ const statusLabel: Record<string, string> = {
 const userMessages: Record<string, string> = {
   PROCESSING: '⚙️ Ваша заявка взята в работу! Менеджер скоро свяжется с вами.',
   AWAITING_PAYMENT: '💳 Менеджер пришлёт реквизиты для оплаты.',
-  COMPLETED: '🎉 Подписка активирована! Спасибо за использование Subpay.',
+  COMPLETED: '🎉 Подписка активирована! Спасибо за использование Subpay Service.',
   CANCELLED: '❌ Ваша заявка отменена. Напишите менеджеру если есть вопросы.',
 }
 
@@ -73,11 +73,11 @@ async function notifyUser(order: any, status: string) {
 
 // ── Приветствие ──────────────────────────────────────────────
 bot.command('start', (ctx) => ctx.reply(
-  'Добро пожаловать в Subpay! 🎉\n\nОплачивайте зарубежные подписки легко и быстро.',
+  'Добро пожаловать в Subpay Service! 🎉\n\nОплачивайте зарубежные подписки легко и быстро.',
   {
     reply_markup: {
       inline_keyboard: [[
-        { text: '🚀 Открыть Subpay', web_app: { url: 'https://subpay-mini-app.vercel.app' } }
+        { text: '🚀 Открыть Subpay Service', web_app: { url: 'https://subpay-mini-app.vercel.app' } }
       ]]
     }
   }

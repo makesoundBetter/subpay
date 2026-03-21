@@ -56,7 +56,7 @@ export default function OrdersPage({ onSelectUser }: { onSelectUser: (id: string
 
   return (
     <>
-      <h1>Subpay Admin</h1>
+      <h1>Subpay Service Admin</h1>
 
       <div className="stat-row">
         <div className="stat"><div className="stat-value">{counts.total}</div><div className="stat-label">Всего заявок</div></div>
