@@ -11,7 +11,7 @@ export type SelectedService = {
   id: number
   name: string
   category: string
-  emoji: string
+  icon: string
   prices: { duration: string; total: number }[]
 }
 

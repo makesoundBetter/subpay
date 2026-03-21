@@ -61,7 +61,7 @@ export default function OrderPage({ service, onBack }: Props) {
       </div>
 
       <div className="order-service">
-        <span className="service-emoji large">{service.emoji}</span>
+        <img className="order-service-icon" src={service.icon} alt={service.name} />
         <h2>{service.name}</h2>
       </div>
 

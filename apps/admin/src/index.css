@@ -2,8 +2,12 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: #0a0a0a;
+  background: #000;
   color: #f0f0f0;
+  background-image:
+    linear-gradient(rgba(255, 224, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 224, 0, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
 }
 
 .layout {
@@ -12,27 +16,36 @@ body {
   padding: 24px 16px;
 }
 
-h1 { font-size: 24px; font-weight: 700; margin-bottom: 24px; }
-h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+h1 {
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #FFE000;
+  text-shadow: 0 0 20px rgba(255, 224, 0, 0.5);
+  margin-bottom: 24px;
+}
+h2 { font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #ccc; letter-spacing: 1px; text-transform: uppercase; }
 
 .back-btn {
   background: none;
   border: none;
-  color: #60a5fa;
+  color: #FFE000;
   cursor: pointer;
   font-size: 14px;
   margin-bottom: 16px;
   padding: 0;
   display: block;
+  letter-spacing: 0.5px;
 }
 .back-btn:hover { text-decoration: underline; }
 
 .card {
-  background: #1a1a1a;
+  background: #080808;
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 16px;
-  border: 1px solid #2a2a2a;
+  border: 1px solid #1a1a1a;
 }
 
 .stat-row {
@@ -43,36 +56,37 @@ h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
 }
 
 .stat {
-  background: #1a1a1a;
+  background: #080808;
   border-radius: 10px;
   padding: 16px 20px;
-  border: 1px solid #2a2a2a;
+  border: 1px solid #1a1a1a;
   min-width: 110px;
 }
-.stat-value { font-size: 28px; font-weight: 700; color: #fff; }
-.stat-label { font-size: 13px; color: #888; margin-top: 2px; }
+.stat-value { font-size: 28px; font-weight: 700; color: #FFE000; text-shadow: 0 0 10px rgba(255, 224, 0, 0.4); }
+.stat-label { font-size: 12px; color: #555; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
 
 .orders-table { width: 100%; border-collapse: collapse; }
 .orders-table th {
   text-align: left;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  color: #888;
+  color: #444;
   text-transform: uppercase;
+  letter-spacing: 1px;
   padding: 8px 12px;
-  border-bottom: 1px solid #2a2a2a;
+  border-bottom: 1px solid #1a1a1a;
 }
 .orders-table td {
   padding: 12px;
-  border-bottom: 1px solid #1f1f1f;
+  border-bottom: 1px solid #0f0f0f;
   font-size: 14px;
   vertical-align: middle;
-  color: #e0e0e0;
+  color: #d0d0d0;
 }
-.orders-table tr:hover td { background: #222; cursor: pointer; }
+.orders-table tr:hover td { background: #0d0d00; cursor: pointer; }
 
 .user-name { font-weight: 600; color: #fff; }
-.user-meta { font-size: 12px; color: #888; margin-top: 2px; }
+.user-meta { font-size: 12px; color: #444; margin-top: 2px; }
 
 .status-badge {
   display: inline-block;
@@ -82,26 +96,26 @@ h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
   font-weight: 500;
   white-space: nowrap;
 }
-.status-NEW { background: #1e3a5f; color: #93c5fd; }
-.status-PROCESSING { background: #3d2c00; color: #fcd34d; }
-.status-AWAITING_PAYMENT { background: #2d1b69; color: #c4b5fd; }
-.status-PAID { background: #064e3b; color: #6ee7b7; }
-.status-COMPLETED { background: #064e3b; color: #6ee7b7; }
-.status-CANCELLED { background: #450a0a; color: #fca5a5; }
+.status-NEW { background: rgba(255, 224, 0, 0.15); color: #FFE000; }
+.status-PROCESSING { background: rgba(255, 165, 0, 0.15); color: #FFA500; }
+.status-AWAITING_PAYMENT { background: rgba(150, 100, 255, 0.15); color: #b080ff; }
+.status-PAID { background: rgba(0, 255, 100, 0.1); color: #00ff64; }
+.status-COMPLETED { background: rgba(0, 255, 100, 0.1); color: #00ff64; }
+.status-CANCELLED { background: rgba(255, 50, 50, 0.1); color: #ff5555; }
 
 .select-status {
   padding: 4px 8px;
   border-radius: 6px;
-  border: 1px solid #3a3a3a;
+  border: 1px solid #2a2a2a;
   font-size: 13px;
   cursor: pointer;
-  background: #2a2a2a;
+  background: #111;
   color: #e0e0e0;
 }
 
-.loading { text-align: center; color: #888; padding: 48px; }
-.error-msg { color: #fca5a5; padding: 16px; }
+.loading { text-align: center; color: #444; padding: 48px; }
+.error-msg { color: #ff5555; padding: 16px; }
 
 .user-profile-field { margin-bottom: 12px; }
-.user-profile-field label { font-size: 12px; color: #888; display: block; margin-bottom: 2px; }
+.user-profile-field label { font-size: 11px; color: #444; display: block; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
 .user-profile-field span { font-size: 15px; font-weight: 500; color: #fff; }
