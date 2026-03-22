@@ -1,20 +1,21 @@
 import { useState } from 'react'
+import { Sparkles, Tv2, Gamepad2, MessageCircle, Palette, Code2, Cloud, Plane, Shield, GraduationCap, CreditCard } from 'lucide-react'
 import type { SelectedService } from '../App'
 
 const G = (domain: string) => `https://www.google.com/s2/favicons?domain=${domain}&sz=64`
 
 const CATEGORIES = [
-  { slug: 'ai', name: '🤖 ИИ-сервисы' },
-  { slug: 'streaming', name: '🎬 Стриминг' },
-  { slug: 'gaming', name: '🎮 Игры' },
-  { slug: 'social', name: '📱 Соц. сети' },
-  { slug: 'design', name: '🎨 Дизайн' },
-  { slug: 'dev', name: '💻 Разработка' },
-  { slug: 'cloud', name: '☁️ Облако' },
-  { slug: 'travel', name: '✈️ Путешествия' },
-  { slug: 'home', name: '🏠 Дом и VPN' },
-  { slug: 'education', name: '📚 Обучение' },
-  { slug: 'payment', name: '💳 Оплата' },
+  { slug: 'ai',        name: 'ИИ-сервисы',   icon: Sparkles },
+  { slug: 'streaming', name: 'Стриминг',      icon: Tv2 },
+  { slug: 'gaming',    name: 'Игры',          icon: Gamepad2 },
+  { slug: 'social',    name: 'Соц. сети',     icon: MessageCircle },
+  { slug: 'design',    name: 'Дизайн',        icon: Palette },
+  { slug: 'dev',       name: 'Разработка',    icon: Code2 },
+  { slug: 'cloud',     name: 'Облако',        icon: Cloud },
+  { slug: 'travel',    name: 'Путешествия',   icon: Plane },
+  { slug: 'home',      name: 'Дом и VPN',     icon: Shield },
+  { slug: 'education', name: 'Обучение',      icon: GraduationCap },
+  { slug: 'payment',   name: 'Оплата',        icon: CreditCard },
 ]
 
 const SERVICES: SelectedService[] = [
@@ -160,6 +161,7 @@ export default function CatalogPage({ onSelectService, onGoToOrders }: Props) {
             className={`cat-btn ${activeCategory === cat.slug ? 'active' : ''}`}
             onClick={() => setActiveCategory(cat.slug)}
           >
+            <cat.icon size={14} />
             {cat.name}
           </button>
         ))}

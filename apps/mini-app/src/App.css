@@ -117,6 +117,9 @@ body {
   cursor: pointer;
   white-space: nowrap;
   font-size: clamp(12px, 3vw, 13px);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   transition: all 0.2s;
   min-height: 34px;
 }
