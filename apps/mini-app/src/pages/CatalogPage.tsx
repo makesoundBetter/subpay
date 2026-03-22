@@ -20,7 +20,7 @@ const CATEGORIES = [
 
 const SERVICES: SelectedService[] = [
   // ИИ-сервисы
-  { id: 1,  name: 'Тест $1',              category: 'ai', icon: G('openai.com'),       prices: [{ duration: '1 месяц', total: 1 }] },
+  { id: 1,  name: 'Тест $2',              category: 'ai', icon: G('openai.com'),       prices: [{ duration: '1 месяц', total: 2 }] },
   { id: 1,  name: 'ChatGPT Plus',           category: 'ai', icon: G('openai.com'),       prices: [{ duration: '1 месяц', total: 25 }, { duration: '3 месяца', total: 70 }, { duration: '1 год', total: 250 }] },
   { id: 2,  name: 'Claude Pro',             category: 'ai', icon: G('claude.ai'),        prices: [{ duration: '1 месяц', total: 25 }, { duration: '3 месяца', total: 70 }] },
   { id: 7,  name: 'Suno AI',               category: 'ai', icon: G('suno.com'),          prices: [{ duration: '1 месяц', total: 12 }, { duration: '3 месяца', total: 32 }] },
