@@ -151,7 +151,9 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
 
   const isSearching = search.trim().length > 0
   const filtered = isSearching
-    ? SERVICES.filter(s => s.name.toLowerCase().includes(search.toLowerCase()))
+    ? SERVICES.filter(s =>
+        s.name.toLowerCase().split(/\s+/).some(word => word.startsWith(search.toLowerCase()))
+      )
     : SERVICES.filter(s => s.category === activeCategory)
   const currentIndex = CATEGORIES.findIndex(c => c.slug === activeCategory)
 
