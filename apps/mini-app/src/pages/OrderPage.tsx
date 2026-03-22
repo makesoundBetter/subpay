@@ -48,11 +48,11 @@ export default function OrderPage({ service, onBack }: Props) {
   if (submitted) {
     return (
       <div className="page center">
-        <h2 style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <h2 style={{ display: 'flex', alignItems: 'center', gap: 10, color: '#ffffff' }}>
           <span className="order-status-dot" style={{ background: '#00bfff', boxShadow: '0 0 8px #00bfff', width: 12, height: 12, flexShrink: 0 }} />
           Заявка отправлена!
         </h2>
-        <p>Менеджер обработает заявку и свяжется с вами для оплаты.</p>
+        <p style={{ color: '#ffffff' }}>Менеджер обработает заявку и свяжется с вами для оплаты.</p>
         <a
           className="btn-manager"
           href="https://t.me/Torontocake"
