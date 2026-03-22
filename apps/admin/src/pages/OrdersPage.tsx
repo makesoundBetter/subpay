@@ -17,6 +17,7 @@ type Order = {
   duration: string
   totalPrice: number
   createdAt: string
+  notes?: string
   service?: { name: string }
   user: {
     telegramId: string
@@ -75,6 +76,7 @@ export default function OrdersPage({ onSelectUser }: { onSelectUser: (id: string
               <th>Сервис</th>
               <th>Период</th>
               <th>Сумма</th>
+              <th>Комментарий</th>
               <th>Статус</th>
               <th>Дата</th>
             </tr>
@@ -93,6 +95,9 @@ export default function OrdersPage({ onSelectUser }: { onSelectUser: (id: string
                 <td>{order.service?.name ?? `#${order.id}`}</td>
                 <td>{order.duration}</td>
                 <td>${order.totalPrice}</td>
+                <td style={{ color: order.notes ? '#FFE000' : '#444', fontSize: '13px', maxWidth: '180px' }}>
+                  {order.notes ?? '—'}
+                </td>
                 <td onClick={e => e.stopPropagation()}>
                   <select
                     className="select-status"
