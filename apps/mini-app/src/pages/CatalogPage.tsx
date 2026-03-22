@@ -140,14 +140,19 @@ const SERVICES: SelectedService[] = [
 type Props = {
   onSelectService: (service: SelectedService) => void
   onGoToOrders: () => void
+  onHowItWorks: () => void
 }
 
-export default function CatalogPage({ onSelectService, onGoToOrders }: Props) {
+export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWorks }: Props) {
   const [activeCategory, setActiveCategory] = useState<string>('ai')
+  const [search, setSearch] = useState('')
   const touchStartX = useRef<number>(0)
   const touchStartY = useRef<number>(0)
 
-  const filtered = SERVICES.filter(s => s.category === activeCategory)
+  const isSearching = search.trim().length > 0
+  const filtered = isSearching
+    ? SERVICES.filter(s => s.name.toLowerCase().includes(search.toLowerCase()))
+    : SERVICES.filter(s => s.category === activeCategory)
   const currentIndex = CATEGORIES.findIndex(c => c.slug === activeCategory)
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -170,10 +175,26 @@ export default function CatalogPage({ onSelectService, onGoToOrders }: Props) {
     <div className="page">
       <div className="header">
         <h1>Subpay Service</h1>
-        <button className="orders-btn" onClick={onGoToOrders}>Мои заявки</button>
+        <div className="header-btns">
+          <button className="orders-btn" onClick={onHowItWorks}>Как это работает</button>
+          <button className="orders-btn" onClick={onGoToOrders}>Мои заявки</button>
+        </div>
       </div>
 
-      <div className="categories">
+      <div className="search-wrap">
+        <input
+          className="search-input"
+          type="text"
+          placeholder="Поиск сервиса..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+        />
+        {isSearching && (
+          <button className="search-clear" onClick={() => setSearch('')}>✕</button>
+        )}
+      </div>
+
+      {!isSearching && <div className="categories">
         {CATEGORIES.map(cat => (
           <button
             key={cat.slug}
@@ -184,7 +205,7 @@ export default function CatalogPage({ onSelectService, onGoToOrders }: Props) {
             {cat.name}
           </button>
         ))}
-      </div>
+      </div>}
 
       <div className="services" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
         {filtered.map(service => (

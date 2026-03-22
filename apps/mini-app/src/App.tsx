@@ -4,9 +4,10 @@ import CatalogPage from './pages/CatalogPage'
 import OrderPage from './pages/OrderPage'
 import MyOrdersPage from './pages/MyOrdersPage'
 import WelcomePage from './pages/WelcomePage'
+import HowItWorksPage from './pages/HowItWorksPage'
 import './App.css'
 
-export type Page = 'catalog' | 'orders'
+export type Page = 'catalog' | 'orders' | 'how'
 
 export type SelectedService = {
   id: number
@@ -42,7 +43,10 @@ function App() {
           <CatalogPage
             onSelectService={setSelectedService}
             onGoToOrders={() => setPage('orders')}
+            onHowItWorks={() => setPage('how')}
           />
+        ) : page === 'how' ? (
+          <HowItWorksPage onBack={() => setPage('catalog')} />
         ) : (
           <MyOrdersPage onBack={() => setPage('catalog')} />
         )}

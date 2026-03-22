@@ -109,6 +109,48 @@ body {
   border-color: #FFE000;
 }
 
+/* ── Header buttons ── */
+.header-btns {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* ── Search ── */
+.search-wrap {
+  position: relative;
+  margin-bottom: 12px;
+  flex-shrink: 0;
+}
+
+.search-input {
+  width: 100%;
+  background: #080808;
+  border: 1px solid #1c1c1c;
+  border-radius: 12px;
+  padding: 10px 40px 10px 14px;
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.search-input::placeholder { color: #444; }
+.search-input:focus { border-color: rgba(255, 224, 0, 0.4); }
+
+.search-clear {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #555;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px;
+}
+
 /* ── Categories ── */
 .categories {
   display: flex;
@@ -433,6 +475,91 @@ body {
 }
 
 .order-date { font-size: 12px; color: #2a2a2a; }
+
+/* ── How it works ── */
+.how-scroll {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  flex: 1;
+  min-height: 0;
+  padding-bottom: 24px;
+  scrollbar-width: none;
+}
+.how-scroll::-webkit-scrollbar { display: none; }
+
+.how-title {
+  font-size: clamp(18px, 5vw, 22px);
+  font-weight: 800;
+  color: #FFE000;
+  margin-bottom: 16px;
+  letter-spacing: 0.5px;
+}
+
+.how-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.how-step {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  background: #080808;
+  border: 1px solid #181818;
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.how-step-num {
+  font-size: 22px;
+  font-weight: 900;
+  color: #FFE000;
+  opacity: 0.7;
+  flex-shrink: 0;
+  line-height: 1;
+  min-width: 32px;
+}
+
+.how-step-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #f0f0f0;
+  margin-bottom: 4px;
+}
+
+.how-step-desc {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.5;
+}
+
+.how-faq {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.how-faq-item {
+  background: #080808;
+  border: 1px solid #181818;
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.how-faq-q {
+  font-size: 14px;
+  font-weight: 700;
+  color: #f0f0f0;
+  margin-bottom: 6px;
+}
+
+.how-faq-a {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.5;
+}
 
 /* ── Small screens (iPhone SE, < 360px) ── */
 @media (max-width: 359px) {
