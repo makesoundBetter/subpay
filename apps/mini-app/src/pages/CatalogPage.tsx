@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Sparkles, Tv2, Gamepad2, MessageCircle, Palette, Code2, Cloud, Plane, Shield, GraduationCap, CreditCard } from 'lucide-react'
 import type { SelectedService } from '../App'
 
@@ -144,8 +144,27 @@ type Props = {
 
 export default function CatalogPage({ onSelectService, onGoToOrders }: Props) {
   const [activeCategory, setActiveCategory] = useState<string>('ai')
+  const touchStartX = useRef<number>(0)
+  const touchStartY = useRef<number>(0)
 
   const filtered = SERVICES.filter(s => s.category === activeCategory)
+  const currentIndex = CATEGORIES.findIndex(c => c.slug === activeCategory)
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX
+    touchStartY.current = e.touches[0].clientY
+  }
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const dx = e.changedTouches[0].clientX - touchStartX.current
+    const dy = e.changedTouches[0].clientY - touchStartY.current
+    if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy)) return
+    if (dx < 0 && currentIndex < CATEGORIES.length - 1) {
+      setActiveCategory(CATEGORIES[currentIndex + 1].slug)
+    } else if (dx > 0 && currentIndex > 0) {
+      setActiveCategory(CATEGORIES[currentIndex - 1].slug)
+    }
+  }
 
   return (
     <div className="page">
@@ -167,7 +186,7 @@ export default function CatalogPage({ onSelectService, onGoToOrders }: Props) {
         ))}
       </div>
 
-      <div className="services">
+      <div className="services" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
         {filtered.map(service => (
           <div key={service.id} className="service-card" onClick={() => onSelectService(service)}>
             <img
