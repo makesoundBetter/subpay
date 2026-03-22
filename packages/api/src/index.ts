@@ -16,7 +16,7 @@ app.get('/health', async () => {
 
 // Создать заявку
 app.post('/orders', async (request, reply) => {
-  const { telegramId, firstName, username, serviceId, serviceName, duration, totalPrice } = request.body as any
+  const { telegramId, firstName, username, serviceId, serviceName, duration, totalPrice, comment } = request.body as any
 
   const user = await prisma.user.upsert({
     where: { telegramId: String(telegramId) },
@@ -31,6 +31,7 @@ app.post('/orders', async (request, reply) => {
       duration,
       totalPrice,
       status: 'NEW',
+      notes: comment || null,
     },
   })
 
@@ -43,7 +44,8 @@ app.post('/orders', async (request, reply) => {
         `👤 ${firstName}${username ? ` (@${username})` : ''}\n` +
         `📱 Сервис: ${serviceName}\n` +
         `⏱ Период: ${duration}\n` +
-        `💰 Сумма: $${totalPrice}`,
+        `💰 Сумма: $${totalPrice}` +
+        (comment ? `\n\n💬 Комментарий: ${comment}` : ''),
         {
           parse_mode: 'Markdown',
           reply_markup: {

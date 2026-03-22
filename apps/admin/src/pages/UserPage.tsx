@@ -17,6 +17,7 @@ type Order = {
   duration: string
   totalPrice: number
   createdAt: string
+  notes?: string
   service?: { name: string }
 }
 
@@ -55,6 +56,7 @@ export default function UserPage({ telegramId, onBack }: { telegramId: string; o
   if (!user) return <div className="error-msg">Пользователь не найден</div>
 
   const total = user.orders.reduce((sum, o) => sum + o.totalPrice, 0)
+  const ordersWithComments = user.orders.filter(o => o.notes)
 
   return (
     <>
@@ -92,6 +94,22 @@ export default function UserPage({ telegramId, onBack }: { telegramId: string; o
         </div>
       </div>
 
+      {ordersWithComments.length > 0 && (
+        <div className="card">
+          <h2>💬 Комментарии клиента</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {ordersWithComments.map(o => (
+              <div key={o.id} style={{ background: '#1a1a1a', borderRadius: '8px', padding: '12px 14px', borderLeft: '3px solid #FFE000' }}>
+                <div style={{ fontSize: '12px', color: '#666', marginBottom: '6px' }}>
+                  #{o.id} · {o.service?.name ?? '—'} · {new Date(o.createdAt).toLocaleDateString('ru-RU')}
+                </div>
+                <div style={{ color: '#f0f0f0', fontSize: '14px' }}>{o.notes}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="card">
         <h2>История заявок</h2>
         <table className="orders-table">
@@ -101,6 +119,7 @@ export default function UserPage({ telegramId, onBack }: { telegramId: string; o
               <th>Сервис</th>
               <th>Период</th>
               <th>Сумма</th>
+              <th>Комментарий</th>
               <th>Статус</th>
               <th>Дата</th>
             </tr>
@@ -112,6 +131,9 @@ export default function UserPage({ telegramId, onBack }: { telegramId: string; o
                 <td>{order.service?.name ?? '—'}</td>
                 <td>{order.duration}</td>
                 <td>${order.totalPrice}</td>
+                <td style={{ color: order.notes ? '#FFE000' : '#333', maxWidth: '200px', fontSize: '13px' }}>
+                  {order.notes ?? '—'}
+                </td>
                 <td>
                   <select
                     className="select-status"
