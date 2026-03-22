@@ -3,7 +3,7 @@ import Fastify from 'fastify'
 import cors from '@fastify/cors'
 import { PrismaClient } from '@prisma/client'
 import { Bot } from 'grammy'
-import { createPayment, verifyWebhook, CRYPTO_CURRENCIES } from './cryptomus'
+import { createPayment, verifyWebhook, CRYPTO_CURRENCIES } from './cryptomus.js'
 
 const app = Fastify({ logger: true })
 const prisma = new PrismaClient()
