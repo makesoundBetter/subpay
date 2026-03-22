@@ -27,6 +27,10 @@ body {
   height: 100%;
 }
 
+#root > * {
+  height: 100%;
+}
+
 .app {
   max-width: 520px;
   margin: 0 auto;
@@ -38,6 +42,7 @@ body {
 .page {
   padding: 14px 14px 0;
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -129,8 +134,10 @@ body {
   display: flex;
   flex-direction: column;
   gap: 7px;
-  overflow-y: auto;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
   flex: 1;
+  min-height: 0;
   padding-bottom: 12px;
   scrollbar-width: none;
 }
