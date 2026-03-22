@@ -392,6 +392,29 @@ body {
   box-shadow: 0 0 36px rgba(255, 224, 0, 0.5);
 }
 
+.btn-manager {
+  width: 100%;
+  background: transparent;
+  color: #FFE000;
+  border: 1px solid rgba(255, 224, 0, 0.4);
+  padding: 15px;
+  border-radius: 14px;
+  font-size: clamp(15px, 4vw, 16px);
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  transition: all 0.2s;
+  min-height: 52px;
+  line-height: 1.4;
+}
+
+.btn-manager:active {
+  background: rgba(255, 224, 0, 0.08);
+  border-color: #FFE000;
+}
+
 .btn-primary:disabled {
   opacity: 0.4;
   cursor: not-allowed;

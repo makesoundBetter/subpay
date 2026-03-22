@@ -50,7 +50,15 @@ export default function OrderPage({ service, onBack }: Props) {
       <div className="page center">
         <div className="success-icon">✅</div>
         <h2>Заявка отправлена!</h2>
-        <p>Наш менеджер свяжется с вами в Telegram в ближайшее время.</p>
+        <p>Менеджер обработает заявку и свяжется с вами для оплаты.</p>
+        <a
+          className="btn-manager"
+          href="https://t.me/Torontocake"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          💬 Написать менеджеру
+        </a>
         <button className="btn-primary" onClick={onBack}>На главную</button>
       </div>
     )
