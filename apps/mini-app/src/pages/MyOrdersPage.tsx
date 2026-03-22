@@ -41,8 +41,16 @@ export default function MyOrdersPage({ onBack }: Props) {
 
   return (
     <div className="page">
-      <div className="back-header">
+      <div className="back-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <button className="back-btn" onClick={onBack}>← Назад</button>
+        <a
+          href="https://t.me/Torontocake"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="manager-link"
+        >
+          💬 Менеджер
+        </a>
       </div>
       <h2>Мои заявки</h2>
 

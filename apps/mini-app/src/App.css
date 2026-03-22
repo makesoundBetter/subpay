@@ -415,6 +415,20 @@ body {
   border-color: #FFE000;
 }
 
+.manager-link {
+  color: #FFE000;
+  font-size: 14px;
+  text-decoration: none;
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 224, 0, 0.4);
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+.manager-link:active {
+  background: rgba(255, 224, 0, 0.08);
+}
+
 .btn-primary:disabled {
   opacity: 0.4;
   cursor: not-allowed;
