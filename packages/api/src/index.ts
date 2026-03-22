@@ -78,7 +78,7 @@ app.post('/orders', async (request, reply) => {
         : `\n💳 Оплата: Перевод менеджеру`
       await bot.api.sendMessage(
         adminId,
-        `📦 *Новая заявка #${order.id}*\n\n` +
+        `📦 <b>Новая заявка #${order.id}</b>\n\n` +
         `👤 ${firstName}${username ? ` (@${username})` : ''}\n` +
         `📱 Сервис: ${serviceName}\n` +
         `⏱ Период: ${duration}\n` +
@@ -86,7 +86,7 @@ app.post('/orders', async (request, reply) => {
         paymentLine +
         (comment ? `\n\n💬 Комментарий: ${comment}` : ''),
         {
-          parse_mode: 'Markdown',
+          parse_mode: 'HTML',
           reply_markup: {
             inline_keyboard: [[
               { text: '⚙️ В работу', callback_data: `process_${order.id}` },
