@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { AppRoot } from '@telegram-apps/telegram-ui'
 import CatalogPage from './pages/CatalogPage'
 import OrderPage from './pages/OrderPage'
@@ -18,6 +18,14 @@ export type SelectedService = {
 
 function App() {
   const [welcomed, setWelcomed] = useState(false)
+
+  useEffect(() => {
+    const tg = (window as any).Telegram?.WebApp
+    if (tg) {
+      tg.disableVerticalSwipes?.()
+      tg.expand()
+    }
+  }, [])
   const [page, setPage] = useState<Page>('catalog')
   const [selectedService, setSelectedService] = useState<SelectedService | null>(null)
 
