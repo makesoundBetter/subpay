@@ -49,7 +49,7 @@ export default function MyOrdersPage({ onBack }: Props) {
           rel="noopener noreferrer"
           className="manager-link"
         >
-          💬 Менеджер
+          Менеджер
         </a>
       </div>
       <h2>Мои заявки</h2>
