@@ -48,8 +48,10 @@ export default function OrderPage({ service, onBack }: Props) {
   if (submitted) {
     return (
       <div className="page center">
-        <div className="success-icon">✅</div>
-        <h2>Заявка отправлена!</h2>
+        <h2 style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span className="order-status-dot" style={{ background: '#00bfff', boxShadow: '0 0 8px #00bfff', width: 12, height: 12, flexShrink: 0 }} />
+          Заявка отправлена!
+        </h2>
         <p>Менеджер обработает заявку и свяжется с вами для оплаты.</p>
         <a
           className="btn-manager"
@@ -57,7 +59,7 @@ export default function OrderPage({ service, onBack }: Props) {
           target="_blank"
           rel="noopener noreferrer"
         >
-          💬 Написать менеджеру
+          Написать менеджеру
         </a>
         <button className="btn-primary" onClick={onBack}>На главную</button>
       </div>
