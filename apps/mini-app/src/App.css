@@ -98,8 +98,8 @@ body {
 /* ── Categories ── */
 .categories {
   display: flex;
+  flex-wrap: wrap;
   gap: 7px;
-  overflow-x: auto;
   padding-bottom: 10px;
   margin-bottom: 12px;
   scrollbar-width: none;
