@@ -12,9 +12,9 @@ type Order = {
 
 const STATUS_CONFIG: Record<string, { label: string; bg: string; border: string; dot: string }> = {
   NEW:              { label: 'Новая',           bg: '#0a2535', border: '#00bfff', dot: '#00bfff' },
-  PROCESSING:       { label: 'В работе',        bg: '#0a1535', border: '#FFE000', dot: '#2255cc' },
+  PROCESSING:       { label: 'В работе',        bg: '#0a1535', border: '#2255cc', dot: '#2255cc' },
   AWAITING_PAYMENT: { label: 'Ожидает оплаты',  bg: '#2a2200', border: '#FFE000', dot: '#FFE000' },
-  PAID:             { label: 'Оплачено',         bg: '#2a1500', border: '#44cc44', dot: '#ff8800' },
+  PAID:             { label: 'Оплачено',         bg: '#2a1500', border: '#ff8800', dot: '#ff8800' },
   COMPLETED:        { label: 'Выполнено',        bg: '#0a2a0a', border: '#44cc44', dot: '#44cc44' },
   CANCELLED:        { label: 'Отменена',         bg: '#2a0a0a', border: '#cc4444', dot: '#cc4444' },
 }
