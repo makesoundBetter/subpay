@@ -3,6 +3,7 @@ import Fastify from 'fastify'
 import cors from '@fastify/cors'
 import { PrismaClient } from '@prisma/client'
 import { Bot } from 'grammy'
+import { createPayment, verifyWebhook, CRYPTO_CURRENCIES } from './cryptomus'
 
 const app = Fastify({ logger: true })
 const prisma = new PrismaClient()
@@ -16,7 +17,7 @@ app.get('/health', async () => {
 
 // Создать заявку
 app.post('/orders', async (request, reply) => {
-  const { telegramId, firstName, username, serviceId, serviceName, duration, totalPrice, comment } = request.body as any
+  const { telegramId, firstName, username, serviceId, serviceName, duration, totalPrice, comment, paymentMethod, cryptoCurrency } = request.body as any
 
   const user = await prisma.user.upsert({
     where: { telegramId: String(telegramId) },
@@ -24,20 +25,57 @@ app.post('/orders', async (request, reply) => {
     create: { telegramId: String(telegramId), firstName, username },
   })
 
+  const isCrypto = paymentMethod === 'CRYPTO'
+
   const order = await prisma.order.create({
     data: {
       userId: user.id,
       serviceId,
       duration,
       totalPrice,
-      status: 'NEW',
+      status: isCrypto ? 'AWAITING_PAYMENT' : 'NEW',
       notes: comment || null,
+      paymentMethod: paymentMethod || 'TRANSFER',
+      cryptoCurrency: isCrypto ? cryptoCurrency : null,
     },
   })
+
+  let paymentData = null
+
+  if (isCrypto && cryptoCurrency) {
+    try {
+      const coin = CRYPTO_CURRENCIES[cryptoCurrency]
+      const webhookUrl = `${process.env.API_URL}/webhooks/nowpayments`
+      const payment = await createPayment({
+        orderId: order.id,
+        amountUsd: totalPrice,
+        payCurrency: coin.code,
+        webhookUrl,
+        description: `${serviceName} - ${duration}`,
+      })
+
+      await prisma.order.update({
+        where: { id: order.id },
+        data: {
+          paymentId: payment.paymentId,
+          paymentAddress: payment.address,
+          paymentAmount: payment.amount,
+          cryptoCurrency: payment.currency,
+        },
+      })
+
+      paymentData = payment
+    } catch (e) {
+      app.log.error('Failed to create NOWPayments payment: ' + e)
+    }
+  }
 
   const adminId = process.env.ADMIN_TELEGRAM_ID
   if (adminId) {
     try {
+      const paymentLine = isCrypto
+        ? `\n💳 Оплата: Крипта (${cryptoCurrency})`
+        : `\n💳 Оплата: Перевод менеджеру`
       await bot.api.sendMessage(
         adminId,
         `📦 *Новая заявка #${order.id}*\n\n` +
@@ -45,6 +83,7 @@ app.post('/orders', async (request, reply) => {
         `📱 Сервис: ${serviceName}\n` +
         `⏱ Период: ${duration}\n` +
         `💰 Сумма: $${totalPrice}` +
+        paymentLine +
         (comment ? `\n\n💬 Комментарий: ${comment}` : ''),
         {
           parse_mode: 'Markdown',
@@ -61,7 +100,84 @@ app.post('/orders', async (request, reply) => {
     }
   }
 
-  return { success: true, orderId: order.id }
+  return { success: true, orderId: order.id, paymentData }
+})
+
+// Статус платежа по заявке
+app.get('/orders/:orderId/payment', async (request) => {
+  const { orderId } = request.params as any
+  const order = await prisma.order.findUnique({
+    where: { id: parseInt(orderId) },
+    select: {
+      id: true,
+      status: true,
+      paymentMethod: true,
+      cryptoCurrency: true,
+      paymentId: true,
+      paymentAddress: true,
+      paymentAmount: true,
+      totalPrice: true,
+    },
+  })
+  return order
+})
+
+// Webhook от NOWPayments
+app.post('/webhooks/nowpayments', { config: { rawBody: true } }, async (request, reply) => {
+  const signature = (request.headers['x-nowpayments-sig'] as string) || ''
+  const rawBody = (request as any).rawBody as string
+
+  if (!verifyWebhook(rawBody, signature)) {
+    return reply.code(401).send({ error: 'Invalid signature' })
+  }
+
+  const body = request.body as any
+  const orderId = parseInt(body.order_id)
+  const paymentStatus = body.payment_status
+
+  // NOWPayments statuses: waiting → confirming → confirmed → sending → partially_paid → finished → failed → refunded → expired
+  if (['finished', 'confirmed'].includes(paymentStatus)) {
+    await prisma.order.update({
+      where: { id: orderId },
+      data: { status: 'PAID' },
+    })
+
+    const order = await prisma.order.findUnique({
+      where: { id: orderId },
+      include: { user: true, service: true },
+    })
+
+    const adminId = process.env.ADMIN_TELEGRAM_ID
+    if (adminId && order) {
+      try {
+        await bot.api.sendMessage(
+          adminId,
+          `✅ *Оплачено! Заявка #${order.id}*\n\n` +
+          `👤 ${order.user.firstName}\n` +
+          `📱 ${order.service?.name}\n` +
+          `💰 $${order.totalPrice} (${order.cryptoCurrency})`,
+          { parse_mode: 'Markdown' }
+        )
+      } catch (e) {}
+    }
+
+    if (order) {
+      try {
+        await bot.api.sendMessage(
+          order.user.telegramId,
+          `✅ *Оплата подтверждена!*\n\nВаша заявка #${order.id} оплачена. Менеджер приступит к выполнению.`,
+          { parse_mode: 'Markdown' }
+        )
+      } catch (e) {}
+    }
+  } else if (['failed', 'expired'].includes(paymentStatus)) {
+    await prisma.order.update({
+      where: { id: orderId },
+      data: { status: 'CANCELLED' },
+    })
+  }
+
+  return { ok: true }
 })
 
 // Получить заявки пользователя

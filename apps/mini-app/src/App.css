@@ -463,6 +463,210 @@ body {
   line-height: 1.6;
 }
 
+/* ── Payment method toggle ── */
+.payment-method-toggle {
+  display: flex;
+  gap: 10px;
+}
+
+.payment-method-btn {
+  flex: 1;
+  padding: 12px;
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 12px;
+  color: #888;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.payment-method-btn.active {
+  background: #0d1f2d;
+  border-color: #FFE000;
+  color: #FFE000;
+}
+
+/* ── Coin grid ── */
+.coin-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.coin-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 6px;
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.coin-card.active {
+  background: #0d1f2d;
+  border-color: #00bfff;
+}
+
+.coin-icon { font-size: 22px; }
+
+.coin-label {
+  font-size: 11px;
+  color: #aaa;
+  text-align: center;
+}
+
+.coin-card.active .coin-label { color: #00bfff; }
+
+/* ── Crypto payment page ── */
+.crypto-pay-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.crypto-pay-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.crypto-pay-subtitle {
+  font-size: 14px;
+  color: #888;
+  margin-top: 4px;
+}
+
+.crypto-amount-box {
+  background: #0d1f2d;
+  border: 1px solid #00bfff44;
+  border-radius: 14px;
+  padding: 16px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.crypto-amount-label {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 6px;
+}
+
+.crypto-amount-value {
+  font-size: 28px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.crypto-amount-value span {
+  font-size: 16px;
+  color: #00bfff;
+}
+
+.crypto-amount-usd {
+  font-size: 13px;
+  color: #888;
+  margin-top: 4px;
+}
+
+.crypto-qr-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.crypto-qr {
+  border-radius: 12px;
+  border: 2px solid #333;
+}
+
+.crypto-address-wrap {
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+.crypto-address-label {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 6px;
+}
+
+.crypto-address {
+  font-size: 12px;
+  color: #ffffff;
+  word-break: break-all;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.crypto-copy-btn {
+  width: 100%;
+  padding: 10px;
+  background: transparent;
+  border: 1px solid #FFE000;
+  border-radius: 8px;
+  color: #FFE000;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.crypto-copy-btn:active { background: rgba(255, 224, 0, 0.08); }
+
+.crypto-timer-wrap {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.crypto-timer-label {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 4px;
+}
+
+.crypto-timer {
+  font-size: 32px;
+  font-weight: 800;
+  color: #FFE000;
+  font-variant-numeric: tabular-nums;
+}
+
+.crypto-status-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.crypto-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #00bfff;
+  box-shadow: 0 0 6px #00bfff;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.crypto-status-text {
+  font-size: 14px;
+  color: #888;
+}
+
+.crypto-paid-icon {
+  font-size: 60px;
+}
+
 /* ── Success / Empty ── */
 .success-icon { font-size: clamp(48px, 15vw, 64px); }
 

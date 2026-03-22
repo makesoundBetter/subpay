@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react'
 import { AppRoot } from '@telegram-apps/telegram-ui'
 import CatalogPage from './pages/CatalogPage'
 import OrderPage from './pages/OrderPage'
+import type { CryptoPaymentData } from './pages/OrderPage'
 import MyOrdersPage from './pages/MyOrdersPage'
 import WelcomePage from './pages/WelcomePage'
 import HowItWorksPage from './pages/HowItWorksPage'
+import CryptoPaymentPage from './pages/CryptoPaymentPage'
 import './App.css'
 
 export type Page = 'catalog' | 'orders' | 'how'
@@ -27,17 +29,38 @@ function App() {
       tg.expand()
     }
   }, [])
+
   const [page, setPage] = useState<Page>('catalog')
   const [selectedService, setSelectedService] = useState<SelectedService | null>(null)
+  const [cryptoPayment, setCryptoPayment] = useState<{ orderId: number; data: CryptoPaymentData } | null>(null)
+
+  const handleCryptoPayment = (orderId: number, data: CryptoPaymentData) => {
+    setSelectedService(null)
+    setCryptoPayment({ orderId, data })
+  }
+
+  const handlePaid = () => {
+    setCryptoPayment(null)
+    setPage('orders')
+  }
 
   return (
     <AppRoot>
       <div className="app">
         {!welcomed && <WelcomePage onDone={() => setWelcomed(true)} />}
-        {selectedService ? (
+
+        {cryptoPayment ? (
+          <CryptoPaymentPage
+            orderId={cryptoPayment.orderId}
+            payment={cryptoPayment.data}
+            onBack={() => { setCryptoPayment(null); setPage('catalog') }}
+            onPaid={handlePaid}
+          />
+        ) : selectedService ? (
           <OrderPage
             service={selectedService}
             onBack={() => setSelectedService(null)}
+            onCryptoPayment={handleCryptoPayment}
           />
         ) : page === 'catalog' ? (
           <CatalogPage
