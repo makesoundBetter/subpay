@@ -398,6 +398,25 @@ body {
   box-shadow: none;
 }
 
+.order-comment {
+  width: 100%;
+  background: #080808;
+  border: 1px solid #1c1c1c;
+  border-radius: 12px;
+  padding: 12px 14px;
+  color: #fff;
+  font-size: 14px;
+  font-family: inherit;
+  resize: none;
+  outline: none;
+  margin-bottom: 16px;
+  transition: border-color 0.2s;
+  line-height: 1.5;
+}
+
+.order-comment::placeholder { color: #444; }
+.order-comment:focus { border-color: rgba(255, 224, 0, 0.4); }
+
 .order-note {
   margin-top: 14px;
   font-size: 12px;

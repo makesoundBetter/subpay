@@ -8,6 +8,7 @@ type Props = {
 
 export default function OrderPage({ service, onBack }: Props) {
   const [selectedPrice, setSelectedPrice] = useState(service.prices[0])
+  const [comment, setComment] = useState('')
   const [loading, setLoading] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
@@ -31,6 +32,7 @@ export default function OrderPage({ service, onBack }: Props) {
           serviceName: service.name,
           duration: selectedPrice.duration,
           totalPrice: selectedPrice.total,
+          comment: comment.trim() || null,
         }),
       })
 
@@ -84,6 +86,16 @@ export default function OrderPage({ service, onBack }: Props) {
           <span>Итого:</span>
           <span className="total-amount">${selectedPrice.total}</span>
         </div>
+
+        <div className="section-title" style={{ marginTop: 20 }}>Комментарий (необязательно)</div>
+        <textarea
+          className="order-comment"
+          placeholder="Например: нужен семейный план, есть промокод, особые пожелания..."
+          value={comment}
+          onChange={e => setComment(e.target.value)}
+          maxLength={300}
+          rows={3}
+        />
 
         {error && <p className="error-msg">{error}</p>}
 
