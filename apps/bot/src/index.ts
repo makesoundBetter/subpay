@@ -198,5 +198,10 @@ bot.callbackQuery(/^cancel_(\d+)$/, async (ctx) => {
   await ctx.answerCallbackQuery('❌ Отменена')
 })
 
+bot.api.setMyCommands([
+  { command: 'start', description: '🚀 Открыть Subpay Service' },
+  { command: 'help', description: '📖 Помощь и как это работает' },
+])
+
 bot.start()
 console.log('Bot started')
