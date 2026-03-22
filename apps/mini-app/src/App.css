@@ -260,6 +260,7 @@ body {
   border: 1px solid #181818;
   transition: all 0.2s;
   min-height: 50px;
+  color: #ffffff;
 }
 
 .price-card.active {
@@ -283,6 +284,7 @@ body {
   border-radius: 12px;
   margin-bottom: 14px;
   border: 1px solid #181818;
+  color: #ffffff;
 }
 
 .total-amount {
