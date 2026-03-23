@@ -26,23 +26,25 @@ type Order = {
   }
 }
 
-export default function OrdersPage({ onSelectUser }: { onSelectUser: (id: string) => void }) {
+export default function OrdersPage({ apiKey, onSelectUser, onUnauthorized }: { apiKey: string; onSelectUser: (id: string) => void; onUnauthorized: () => void }) {
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
+  const headers = { 'x-admin-key': apiKey }
 
   useEffect(() => {
-    fetch(`${API}/admin/orders/all`)
-      .then(r => r.json())
-      .then(setOrders)
+    fetch(`${API}/admin/orders/all`, { headers })
+      .then(r => { if (r.status === 401) { onUnauthorized(); return null } return r.json() })
+      .then(data => { if (data) setOrders(data) })
       .finally(() => setLoading(false))
   }, [])
 
   const changeStatus = async (orderId: number, status: string) => {
-    await fetch(`${API}/admin/orders/${orderId}/status`, {
+    const res = await fetch(`${API}/admin/orders/${orderId}/status`, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...headers },
       body: JSON.stringify({ status }),
     })
+    if (res.status === 401) { onUnauthorized(); return }
     setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o))
   }
 

@@ -6,6 +6,7 @@ if (!token) throw new Error('BOT_TOKEN is not set')
 
 const adminTelegramId = process.env.ADMIN_TELEGRAM_ID
 const apiUrl = process.env.API_URL || 'http://localhost:3000'
+const adminApiKey = process.env.ADMIN_API_KEY || ''
 
 const bot = new Bot(token)
 
@@ -52,7 +53,7 @@ function getButtons(orderId: number, status: string) {
 async function updateOrder(orderId: number, status: string) {
   const res = await fetch(`${apiUrl}/admin/orders/${orderId}/status`, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'x-admin-key': adminApiKey },
     body: JSON.stringify({ status }),
   })
   return res.json() as Promise<any>
@@ -110,7 +111,7 @@ bot.command('start', (ctx) => ctx.reply(
 bot.command('orders', async (ctx) => {
   if (!isAdmin(ctx)) return
 
-  const res = await fetch(`${apiUrl}/admin/orders`)
+  const res = await fetch(`${apiUrl}/admin/orders`, { headers: { 'x-admin-key': adminApiKey } })
   const orders = await res.json() as any[]
 
   if (!orders.length) return ctx.reply('Нет активных заявок ✅')

@@ -29,23 +29,25 @@ type User = {
   orders: Order[]
 }
 
-export default function UserPage({ telegramId, onBack }: { telegramId: string; onBack: () => void }) {
+export default function UserPage({ apiKey, telegramId, onBack, onUnauthorized }: { apiKey: string; telegramId: string; onBack: () => void; onUnauthorized: () => void }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
+  const headers = { 'x-admin-key': apiKey }
 
   useEffect(() => {
-    fetch(`${API}/admin/users/${telegramId}`)
-      .then(r => r.json())
-      .then(setUser)
+    fetch(`${API}/admin/users/${telegramId}`, { headers })
+      .then(r => { if (r.status === 401) { onUnauthorized(); return null } return r.json() })
+      .then(data => { if (data) setUser(data) })
       .finally(() => setLoading(false))
   }, [telegramId])
 
   const changeStatus = async (orderId: number, status: string) => {
-    await fetch(`${API}/admin/orders/${orderId}/status`, {
+    const res = await fetch(`${API}/admin/orders/${orderId}/status`, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...headers },
       body: JSON.stringify({ status }),
     })
+    if (res.status === 401) { onUnauthorized(); return }
     setUser(prev => prev ? {
       ...prev,
       orders: prev.orders.map(o => o.id === orderId ? { ...o, status } : o)
