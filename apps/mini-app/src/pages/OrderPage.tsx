@@ -44,13 +44,19 @@ export default function OrderPage({ service, onBack, onCryptoPayment }: Props) {
       const tg = (window as any).Telegram?.WebApp
       const user = tg?.initDataUnsafe?.user
 
+      if (!user?.id) {
+        setError('Откройте приложение через Telegram')
+        setLoading(false)
+        return
+      }
+
       const res = await fetch(`${import.meta.env.VITE_API_URL}/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          telegramId: user?.id ?? 'test_user',
-          firstName: user?.first_name ?? 'Тест',
-          username: user?.username ?? null,
+          telegramId: user.id,
+          firstName: user.first_name ?? '',
+          username: user.username ?? null,
           serviceId: service.id,
           serviceName: service.name,
           duration: selectedPrice.duration,

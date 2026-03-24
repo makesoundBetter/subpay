@@ -6,7 +6,16 @@ import { PrismaClient } from '@prisma/client'
 import { Bot } from 'grammy'
 import { createPayment, verifyWebhook, CRYPTO_CURRENCIES } from './cryptomus.js'
 
-const app = Fastify({ logger: true })
+// Проверка обязательных env-переменных при старте
+const REQUIRED_ENV = ['BOT_TOKEN', 'ADMIN_TELEGRAM_ID', 'ADMIN_API_KEY', 'DATABASE_URL']
+for (const key of REQUIRED_ENV) {
+  if (!process.env[key]) {
+    console.error(`Missing required env variable: ${key}`)
+    process.exit(1)
+  }
+}
+
+const app = Fastify({ logger: true, bodyLimit: 1048576 }) // 1MB max body
 const prisma = new PrismaClient()
 const bot = new Bot(process.env.BOT_TOKEN!)
 
@@ -39,6 +48,16 @@ app.get('/services', async () => {
     orderBy: { id: 'asc' },
   })
   return categories
+})
+
+// Проверка Content-Type для POST/PATCH запросов (защита от form-based CSRF)
+app.addHook('preHandler', async (request: any, reply: any) => {
+  if (['POST', 'PATCH'].includes(request.method) && !request.url.includes('/webhooks/')) {
+    const ct = request.headers['content-type'] || ''
+    if (!ct.includes('application/json')) {
+      return reply.code(415).send({ error: 'Content-Type must be application/json' })
+    }
+  }
 })
 
 // Admin API key middleware
