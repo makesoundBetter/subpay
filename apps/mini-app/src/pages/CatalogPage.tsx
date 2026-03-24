@@ -30,6 +30,7 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
   const [search, setSearch] = useState('')
   const [services, setServices] = useState<SelectedService[]>([])
   const [categories, setCategories] = useState<{ slug: string; name: string; icon: any }[]>([])
+  const [loadError, setLoadError] = useState(false)
   const touchStartX = useRef<number>(0)
   const touchStartY = useRef<number>(0)
 
@@ -55,13 +56,13 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
         setServices(svcs)
         if (cats.length > 0) setActiveCategory(cats[0].slug)
       })
-      .catch(() => {})
+      .catch(() => setLoadError(true))
   }, [])
 
   const isSearching = search.trim().length > 0
   const filtered = isSearching
     ? services.filter(s =>
-        s.name.toLowerCase().split(/\s+/).some(word => word.startsWith(search.toLowerCase()))
+        s.name?.toLowerCase().split(/\s+/).some(word => word.startsWith(search.toLowerCase()))
       )
     : services.filter(s => s.category === activeCategory)
   const currentIndex = categories.findIndex(c => c.slug === activeCategory)
@@ -81,6 +82,15 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
       setActiveCategory(categories[currentIndex - 1].slug)
     }
   }
+
+  if (loadError) return (
+    <div className="page" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
+      <div style={{ textAlign: 'center', color: '#888' }}>
+        <p>Не удалось загрузить каталог</p>
+        <button className="orders-btn" onClick={() => { setLoadError(false); location.reload() }}>Попробовать снова</button>
+      </div>
+    </div>
+  )
 
   return (
     <div className="page">
