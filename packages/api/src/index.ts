@@ -324,6 +324,7 @@ app.get('/orders/:telegramId', async (request) => {
   })
 
   return user?.orders ?? []
+  // Возвращаем пустой массив если пользователь не найден — это нормально для новых юзеров
 })
 
 // Получить активные заявки (для бота)
@@ -346,7 +347,7 @@ app.get('/admin/orders/all', { preHandler: adminAuth }, async () => {
 })
 
 // Профиль пользователя со всеми заявками (для админ-панели)
-app.get('/admin/users/:telegramId', { preHandler: adminAuth }, async (request) => {
+app.get('/admin/users/:telegramId', { preHandler: adminAuth }, async (request, reply) => {
   const { telegramId } = request.params as Record<string, string>
   const user = await prisma.user.findUnique({
     where: { telegramId: String(telegramId) },
@@ -357,6 +358,7 @@ app.get('/admin/users/:telegramId', { preHandler: adminAuth }, async (request) =
       },
     },
   })
+  if (!user) return reply.code(404).send({ error: 'User not found' })
   return user
 })
 

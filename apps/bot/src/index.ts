@@ -68,7 +68,7 @@ async function notifyUser(order: any, status: string) {
       `${msg}\n\n📦 Заявка #${order.id} · ${order.duration} · $${order.totalPrice}`
     )
   } catch (e) {
-    console.error('Failed to notify user:', e)
+    console.error('[bot] Failed to notify user:', e)
   }
 }
 
@@ -112,7 +112,9 @@ bot.command('orders', async (ctx) => {
   if (!isAdmin(ctx)) return
 
   const res = await fetch(`${apiUrl}/admin/orders`, { headers: { 'x-admin-key': adminApiKey } })
+  if (!res.ok) return ctx.reply('Ошибка при получении заявок')
   const orders = await res.json() as any[]
+  if (!Array.isArray(orders)) return ctx.reply('Ошибка при получении заявок')
 
   if (!orders.length) return ctx.reply('Нет активных заявок ✅')
 
@@ -205,4 +207,4 @@ bot.api.setMyCommands([
 ])
 
 bot.start()
-console.log('Bot started')
+console.log('[bot] Started')

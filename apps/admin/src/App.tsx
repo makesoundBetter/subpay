@@ -3,7 +3,9 @@ import './index.css'
 import OrdersPage from './pages/OrdersPage'
 import UserPage from './pages/UserPage'
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+const API = import.meta.env.VITE_API_URL
+if (!API) console.warn('[admin] VITE_API_URL is not set, falling back to localhost:3000')
+const API_URL = API || 'http://localhost:3000'
 
 export type View =
   | { type: 'orders' }
@@ -19,7 +21,7 @@ function LoginPage({ onLogin }: { onLogin: (key: string) => void }) {
     setLoading(true)
     setError(false)
     try {
-      const res = await fetch(`${API}/admin/orders/all`, {
+      const res = await fetch(`${API_URL}/admin/orders/all`, {
         headers: { 'x-admin-key': value.trim() },
       })
       if (res.ok) {
