@@ -370,6 +370,25 @@ const start = async () => {
     process.exit(1)
   }
 
+  // One-time migration: merge 'games' into 'gaming', disable 'Любой сервис'
+  try {
+    const gamesCat = await prisma.category.findUnique({ where: { slug: 'games' } })
+    const gamingCat = await prisma.category.findUnique({ where: { slug: 'gaming' } })
+    if (gamesCat && gamingCat) {
+      const moved = await prisma.service.updateMany({
+        where: { categoryId: gamesCat.id },
+        data: { categoryId: gamingCat.id },
+      })
+      if (moved.count > 0) app.log.info(`Moved ${moved.count} services from 'games' to 'gaming'`)
+    }
+    await prisma.service.updateMany({
+      where: { name: 'Любой сервис', isActive: true },
+      data: { isActive: false },
+    })
+  } catch (e) {
+    app.log.error('Migration error: ' + e)
+  }
+
   if (process.env.API_URL) {
     try {
       await setWebhook(`${process.env.API_URL}/webhooks/cryptobot`)
