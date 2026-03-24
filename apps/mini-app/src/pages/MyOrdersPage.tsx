@@ -34,7 +34,7 @@ export default function MyOrdersPage({ onBack }: Props) {
     const telegramId = tg?.initDataUnsafe?.user?.id ?? 'test_user'
 
     fetch(`${import.meta.env.VITE_API_URL}/orders/${telegramId}`)
-      .then(r => r.json())
+      .then(r => { if (!r.ok) throw new Error(String(r.status)); return r.json() })
       .then(data => setOrders(data))
       .catch(() => setError('Не удалось загрузить заявки'))
       .finally(() => setLoading(false))

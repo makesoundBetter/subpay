@@ -48,6 +48,7 @@ export default function UserPage({ apiKey, telegramId, onBack, onUnauthorized }:
       body: JSON.stringify({ status }),
     })
     if (res.status === 401) { onUnauthorized(); return }
+    if (!res.ok) return
     setUser(prev => prev ? {
       ...prev,
       orders: prev.orders.map(o => o.id === orderId ? { ...o, status } : o)

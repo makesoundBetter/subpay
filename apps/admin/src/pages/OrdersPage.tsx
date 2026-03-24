@@ -45,6 +45,7 @@ export default function OrdersPage({ apiKey, onSelectUser, onUnauthorized }: { a
       body: JSON.stringify({ status }),
     })
     if (res.status === 401) { onUnauthorized(); return }
+    if (!res.ok) return
     setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o))
   }
 

@@ -242,6 +242,7 @@ app.post('/webhooks/nowpayments', { config: { rawBody: true } }, async (request,
   const rawBody = (request as any).rawBody as string
 
   if (!verifyWebhook(rawBody, signature)) {
+    app.log.warn(`Webhook signature mismatch from IP ${request.ip}`)
     return reply.code(401).send({ error: 'Invalid signature' })
   }
 
@@ -374,6 +375,14 @@ app.patch('/admin/orders/:id/status', { preHandler: adminAuth }, async (request)
 })
 
 const start = async () => {
+  try {
+    await prisma.$connect()
+    app.log.info('Database connection established')
+  } catch (err) {
+    app.log.error('Failed to connect to database: ' + err)
+    process.exit(1)
+  }
+
   try {
     await app.listen({ port: 3000, host: '0.0.0.0' })
   } catch (err) {
