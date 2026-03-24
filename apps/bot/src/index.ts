@@ -128,7 +128,7 @@ bot.command('orders', async (ctx) => {
 // ── Команды изменения статуса ────────────────────────────────
 bot.command('process', async (ctx) => {
   if (!isAdmin(ctx)) return
-  const id = parseInt(ctx.match?.trim() ?? '')
+  const id = parseInt(ctx.match?.trim() ?? '', 10)
   if (!id) return ctx.reply('Укажи ID: /process 5')
   const order = await updateOrder(id, 'PROCESSING')
   await notifyUser(order, 'PROCESSING')
@@ -137,7 +137,7 @@ bot.command('process', async (ctx) => {
 
 bot.command('pay', async (ctx) => {
   if (!isAdmin(ctx)) return
-  const id = parseInt(ctx.match?.trim() ?? '')
+  const id = parseInt(ctx.match?.trim() ?? '', 10)
   if (!id) return ctx.reply('Укажи ID: /pay 5')
   const order = await updateOrder(id, 'AWAITING_PAYMENT')
   await notifyUser(order, 'AWAITING_PAYMENT')
@@ -146,7 +146,7 @@ bot.command('pay', async (ctx) => {
 
 bot.command('done', async (ctx) => {
   if (!isAdmin(ctx)) return
-  const id = parseInt(ctx.match?.trim() ?? '')
+  const id = parseInt(ctx.match?.trim() ?? '', 10)
   if (!id) return ctx.reply('Укажи ID: /done 5')
   const order = await updateOrder(id, 'COMPLETED')
   await notifyUser(order, 'COMPLETED')
@@ -155,7 +155,7 @@ bot.command('done', async (ctx) => {
 
 bot.command('cancel', async (ctx) => {
   if (!isAdmin(ctx)) return
-  const id = parseInt(ctx.match?.trim() ?? '')
+  const id = parseInt(ctx.match?.trim() ?? '', 10)
   if (!id) return ctx.reply('Укажи ID: /cancel 5')
   const order = await updateOrder(id, 'CANCELLED')
   await notifyUser(order, 'CANCELLED')
@@ -165,7 +165,7 @@ bot.command('cancel', async (ctx) => {
 // ── Инлайн-кнопки ───────────────────────────────────────────
 bot.callbackQuery(/^process_(\d+)$/, async (ctx) => {
   if (!isAdmin(ctx)) return ctx.answerCallbackQuery()
-  const id = parseInt(ctx.match[1])
+  const id = parseInt(ctx.match[1], 10)
   const order = await updateOrder(id, 'PROCESSING')
   await notifyUser(order, 'PROCESSING')
   await ctx.editMessageReplyMarkup({ reply_markup: { inline_keyboard: getButtons(id, 'PROCESSING') } })
@@ -174,7 +174,7 @@ bot.callbackQuery(/^process_(\d+)$/, async (ctx) => {
 
 bot.callbackQuery(/^pay_(\d+)$/, async (ctx) => {
   if (!isAdmin(ctx)) return ctx.answerCallbackQuery()
-  const id = parseInt(ctx.match[1])
+  const id = parseInt(ctx.match[1], 10)
   const order = await updateOrder(id, 'AWAITING_PAYMENT')
   await notifyUser(order, 'AWAITING_PAYMENT')
   await ctx.editMessageReplyMarkup({ reply_markup: { inline_keyboard: getButtons(id, 'AWAITING_PAYMENT') } })
@@ -183,7 +183,7 @@ bot.callbackQuery(/^pay_(\d+)$/, async (ctx) => {
 
 bot.callbackQuery(/^done_(\d+)$/, async (ctx) => {
   if (!isAdmin(ctx)) return ctx.answerCallbackQuery()
-  const id = parseInt(ctx.match[1])
+  const id = parseInt(ctx.match[1], 10)
   const order = await updateOrder(id, 'COMPLETED')
   await notifyUser(order, 'COMPLETED')
   await ctx.editMessageReplyMarkup({ reply_markup: { inline_keyboard: [] } })
@@ -192,7 +192,7 @@ bot.callbackQuery(/^done_(\d+)$/, async (ctx) => {
 
 bot.callbackQuery(/^cancel_(\d+)$/, async (ctx) => {
   if (!isAdmin(ctx)) return ctx.answerCallbackQuery()
-  const id = parseInt(ctx.match[1])
+  const id = parseInt(ctx.match[1], 10)
   const order = await updateOrder(id, 'CANCELLED')
   await notifyUser(order, 'CANCELLED')
   await ctx.editMessageReplyMarkup({ reply_markup: { inline_keyboard: [] } })

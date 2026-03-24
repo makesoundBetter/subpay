@@ -26,6 +26,21 @@ app.register(rateLimit, {
 const escapeHtml = (text: string) =>
   text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
+// Каталог сервисов
+app.get('/services', async () => {
+  const categories = await prisma.category.findMany({
+    include: {
+      services: {
+        where: { isActive: true },
+        include: { prices: true },
+        orderBy: { id: 'asc' },
+      },
+    },
+    orderBy: { id: 'asc' },
+  })
+  return categories
+})
+
 // Admin API key middleware
 const adminAuth = async (request: any, reply: any) => {
   const key = request.headers['x-admin-key']
@@ -163,7 +178,7 @@ app.post('/orders', { config: { rateLimit: { max: 5, timeWindow: '1 minute' } } 
 app.get('/orders/:orderId/payment', async (request) => {
   const { orderId } = request.params as any
   const order = await prisma.order.findUnique({
-    where: { id: parseInt(orderId) },
+    where: { id: parseInt(orderId, 10) },
     select: {
       id: true,
       status: true,
@@ -307,7 +322,7 @@ app.patch('/admin/orders/:id/status', { preHandler: adminAuth }, async (request)
   const { status } = request.body as any
 
   const order = await prisma.order.update({
-    where: { id: parseInt(id) },
+    where: { id: parseInt(id, 10) },
     data: { status },
     include: { user: true, service: true },
   })
