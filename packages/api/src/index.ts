@@ -337,13 +337,24 @@ app.get('/admin/orders', { preHandler: adminAuth }, async () => {
   return orders
 })
 
-// Все заявки (для админ-панели)
-app.get('/admin/orders/all', { preHandler: adminAuth }, async () => {
-  const orders = await prisma.order.findMany({
-    include: { user: true, service: true },
-    orderBy: { createdAt: 'desc' },
-  })
-  return orders
+// Все заявки (для админ-панели) с пагинацией
+app.get('/admin/orders/all', { preHandler: adminAuth }, async (request) => {
+  const { page = '1', limit = '50' } = request.query as Record<string, string>
+  const pageNum = Math.max(1, parseInt(page, 10))
+  const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10)))
+  const skip = (pageNum - 1) * limitNum
+
+  const [orders, total] = await prisma.$transaction([
+    prisma.order.findMany({
+      include: { user: true, service: true },
+      orderBy: { createdAt: 'desc' },
+      skip,
+      take: limitNum,
+    }),
+    prisma.order.count(),
+  ])
+
+  return { orders, total, page: pageNum, limit: limitNum, pages: Math.ceil(total / limitNum) }
 })
 
 // Профиль пользователя со всеми заявками (для админ-панели)

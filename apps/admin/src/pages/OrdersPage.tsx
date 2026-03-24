@@ -26,17 +26,29 @@ type Order = {
   }
 }
 
+const PAGE_SIZE = 50
+
 export default function OrdersPage({ apiKey, onSelectUser, onUnauthorized }: { apiKey: string; onSelectUser: (id: string) => void; onUnauthorized: () => void }) {
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [total, setTotal] = useState(0)
   const headers = { 'x-admin-key': apiKey }
 
   useEffect(() => {
-    fetch(`${API}/admin/orders/all`, { headers })
+    setLoading(true)
+    fetch(`${API}/admin/orders/all?page=${page}&limit=${PAGE_SIZE}`, { headers })
       .then(r => { if (r.status === 401) { onUnauthorized(); return null } return r.json() })
-      .then(data => { if (data) setOrders(data) })
+      .then(data => {
+        if (data) {
+          setOrders(data.orders)
+          setTotalPages(data.pages)
+          setTotal(data.total)
+        }
+      })
       .finally(() => setLoading(false))
-  }, [])
+  }, [page])
 
   const changeStatus = async (orderId: number, status: string) => {
     const res = await fetch(`${API}/admin/orders/${orderId}/status`, {
@@ -50,7 +62,6 @@ export default function OrdersPage({ apiKey, onSelectUser, onUnauthorized }: { a
   }
 
   const counts = {
-    total: orders.length,
     new: orders.filter(o => o.status === 'NEW').length,
     active: orders.filter(o => ['PROCESSING', 'AWAITING_PAYMENT'].includes(o.status)).length,
     done: orders.filter(o => o.status === 'COMPLETED').length,
@@ -63,14 +74,23 @@ export default function OrdersPage({ apiKey, onSelectUser, onUnauthorized }: { a
       <h1>Subpay Service Admin</h1>
 
       <div className="stat-row">
-        <div className="stat"><div className="stat-value">{counts.total}</div><div className="stat-label">Всего заявок</div></div>
+        <div className="stat"><div className="stat-value">{total}</div><div className="stat-label">Всего заявок</div></div>
         <div className="stat"><div className="stat-value">{counts.new}</div><div className="stat-label">Новых</div></div>
         <div className="stat"><div className="stat-value">{counts.active}</div><div className="stat-label">В работе</div></div>
         <div className="stat"><div className="stat-value">{counts.done}</div><div className="stat-label">Выполнено</div></div>
       </div>
 
       <div className="card">
-        <h2>Все заявки</h2>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+          <h2 style={{ margin: 0 }}>Все заявки</h2>
+          {totalPages > 1 && (
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="orders-btn">←</button>
+              <span style={{ fontSize: 13, color: '#888' }}>{page} / {totalPages}</span>
+              <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="orders-btn">→</button>
+            </div>
+          )}
+        </div>
         <table className="orders-table">
           <thead>
             <tr>
