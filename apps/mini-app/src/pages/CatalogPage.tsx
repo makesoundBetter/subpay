@@ -116,6 +116,7 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
   const [categories, setCategories] = useState<{ slug: string; name: string; icon: any }[]>([])
   const [loadError, setLoadError] = useState(false)
   const categoriesRef = useRef<HTMLDivElement>(null)
+  const servicesRef = useRef<HTMLDivElement>(null)
   const activeCategoryRef = useRef(activeCategory)
   const categoriesListRef = useRef(categories)
   activeCategoryRef.current = activeCategory
@@ -159,14 +160,12 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
     if (!container) return
     const active = container.querySelector('.cat-btn.active') as HTMLElement
     if (!active) return
-    container.scrollTo({
-      left: active.offsetLeft - container.offsetWidth / 2 + active.offsetWidth / 2,
-      behavior: 'smooth',
-    })
+    active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
   }, [activeCategory])
 
   useEffect(() => {
-    if (isSearching) return
+    const el = servicesRef.current
+    if (!el || isSearching) return
     let startX = 0
     let startY = 0
 
@@ -184,11 +183,11 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
       else if (dx > 0 && idx > 0) setActiveCategory(cats[idx - 1].slug)
     }
 
-    document.addEventListener('touchstart', onStart, { passive: true })
-    document.addEventListener('touchend', onEnd, { passive: true })
+    el.addEventListener('touchstart', onStart, { passive: true })
+    el.addEventListener('touchend', onEnd, { passive: true })
     return () => {
-      document.removeEventListener('touchstart', onStart)
-      document.removeEventListener('touchend', onEnd)
+      el.removeEventListener('touchstart', onStart)
+      el.removeEventListener('touchend', onEnd)
     }
   }, [isSearching])
 
@@ -202,7 +201,7 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
   )
 
   return (
-    <div className="page">
+    <div className="page" ref={servicesRef}>
       <div className="header">
         <h1>Subpay Service</h1>
         <div className="header-btns">
