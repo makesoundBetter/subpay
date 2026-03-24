@@ -63,10 +63,6 @@ export default function CryptoPaymentPage({ orderId, payment, onBack, onPaid }: 
 
   return (
     <div className="page">
-      <div className="back-header">
-        <button className="back-btn" onClick={onBack}>← Назад</button>
-      </div>
-
       <div className="order-page-scroll">
         <div className="crypto-pay-header">
           <div className="crypto-pay-title">Оплата криптой</div>

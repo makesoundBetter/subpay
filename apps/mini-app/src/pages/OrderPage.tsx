@@ -99,10 +99,6 @@ export default function OrderPage({ service, onBack, onCryptoPayment }: Props) {
 
   return (
     <div className="page">
-      <div className="back-header">
-        <button className="back-btn" onClick={onBack}>← Назад</button>
-      </div>
-
       <div className="order-page-scroll">
         <div className="order-service">
           <img className="order-service-icon" src={service.icon} alt={service.name} />

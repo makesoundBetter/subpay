@@ -48,9 +48,8 @@ export default function MyOrdersPage({ onBack }: Props) {
 
   return (
     <div className="page">
-      <div className="back-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <button className="back-btn" onClick={onBack}>← Назад</button>
-        <a
+      <div className="back-header" style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+        <
           href={MANAGER_URL}
           target="_blank"
           rel="noopener noreferrer"

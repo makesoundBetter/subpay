@@ -42,10 +42,6 @@ const FAQ = [
 export default function HowItWorksPage({ onBack }: Props) {
   return (
     <div className="page">
-      <div className="back-header">
-        <button className="back-btn" onClick={onBack}>← Назад</button>
-      </div>
-
       <div className="how-scroll">
         <h2 className="how-title">Как это работает</h2>
 
