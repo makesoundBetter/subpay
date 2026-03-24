@@ -49,7 +49,7 @@ export default function MyOrdersPage({ onBack }: Props) {
   return (
     <div className="page">
       <div className="back-header" style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-        <
+        <a
           href={MANAGER_URL}
           target="_blank"
           rel="noopener noreferrer"
