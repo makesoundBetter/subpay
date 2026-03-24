@@ -39,7 +39,7 @@ const FAQ = [
   },
 ]
 
-export default function HowItWorksPage({ onBack }: Props) {
+export default function HowItWorksPage({ onBack: _onBack }: Props) {
   return (
     <div className="page">
       <div className="how-scroll">

@@ -24,7 +24,7 @@ type Props = {
   onBack: () => void
 }
 
-export default function MyOrdersPage({ onBack }: Props) {
+export default function MyOrdersPage({ onBack: _onBack }: Props) {
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')

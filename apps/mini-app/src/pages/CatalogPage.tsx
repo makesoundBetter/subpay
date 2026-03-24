@@ -153,7 +153,6 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
         s.name?.toLowerCase().split(/\s+/).some(word => word.startsWith(search.toLowerCase()))
       )
     : services.filter(s => s.category === activeCategory)
-  const currentIndex = categories.findIndex(c => c.slug === activeCategory)
 
   useEffect(() => {
     const container = categoriesRef.current
