@@ -2,7 +2,7 @@ import 'dotenv/config'
 import Fastify from 'fastify'
 import cors from '@fastify/cors'
 import rateLimit from '@fastify/rate-limit'
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, OrderStatus } from '@prisma/client'
 import { Bot } from 'grammy'
 import { createInvoice, verifyWebhook, setWebhook } from './cryptobot.js'
 
@@ -135,7 +135,7 @@ app.post('/orders', { config: { rateLimit: { max: 5, timeWindow: '1 minute' } } 
       serviceId: Number(serviceId),
       duration,
       totalPrice,
-      status: isCrypto ? 'AWAITING_PAYMENT' : 'NEW',
+      status: isCrypto ? OrderStatus.AWAITING_PAYMENT : OrderStatus.NEW,
       notes: comment || null,
       paymentMethod: paymentMethod || 'TRANSFER',
     },
@@ -240,8 +240,8 @@ app.post('/webhooks/cryptobot', { config: { rawBody: true } }, async (request, r
 
   // updateMany с условием на статус — идемпотентность + защита от race condition
   const { count } = await prisma.order.updateMany({
-    where: { id: orderId, status: { in: ['AWAITING_PAYMENT'] } },
-    data: { status: 'PAID' },
+    where: { id: orderId, status: { in: [OrderStatus.AWAITING_PAYMENT] } },
+    data: { status: OrderStatus.PAID },
   })
 
   // Уведомления отправляем только если статус реально изменился
@@ -304,7 +304,7 @@ app.get('/orders/:telegramId', async (request) => {
 // Получить активные заявки (для бота)
 app.get('/admin/orders', { preHandler: adminAuth }, async () => {
   const orders = await prisma.order.findMany({
-    where: { status: { in: ['NEW', 'PROCESSING', 'AWAITING_PAYMENT'] } },
+    where: { status: { in: [OrderStatus.NEW, OrderStatus.PROCESSING, OrderStatus.AWAITING_PAYMENT] } },
     include: { user: true, service: true },
     orderBy: { createdAt: 'desc' },
   })
@@ -354,7 +354,7 @@ app.patch('/admin/orders/:id/status', { preHandler: adminAuth }, async (request)
 
   const order = await prisma.order.update({
     where: { id: parseInt(id, 10) },
-    data: { status },
+    data: { status: status as OrderStatus },
     include: { user: true, service: true },
   })
 
