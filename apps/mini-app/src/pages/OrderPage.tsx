@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { SelectedService } from '../App'
+import { MANAGER_URL } from '../config'
 
 type Props = {
   service: SelectedService
@@ -91,7 +92,7 @@ export default function OrderPage({ service, onBack, onCryptoPayment }: Props) {
         <p style={{ color: '#ffffff' }}>Менеджер обработает заявку и свяжется с вами для оплаты.</p>
         <a
           className="btn-manager"
-          href="https://t.me/Torontocake"
+          href={MANAGER_URL}
           target="_blank"
           rel="noopener noreferrer"
         >

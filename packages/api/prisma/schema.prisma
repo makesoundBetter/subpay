@@ -36,7 +36,7 @@ model Category {
 model Service {
   id          Int      @id @default(autoincrement())
   categoryId  Int
-  category    Category @relation(fields: [categoryId], references: [id])
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
   name        String
   description String?
   imageUrl    String?
@@ -48,7 +48,7 @@ model Service {
 model Price {
   id         Int     @id @default(autoincrement())
   serviceId  Int
-  service    Service @relation(fields: [serviceId], references: [id])
+  service    Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   duration   String  // "1 месяц", "3 месяца", "1 год"
   basePrice  Float
   commission Float
@@ -59,8 +59,8 @@ model Order {
   id              Int         @id @default(autoincrement())
   userId          Int
   user            User        @relation(fields: [userId], references: [id])
-  serviceId       Int
-  service         Service     @relation(fields: [serviceId], references: [id])
+  serviceId       Int?
+  service         Service?    @relation(fields: [serviceId], references: [id], onDelete: SetNull)
   duration        String
   totalPrice      Float
   status          OrderStatus @default(NEW)

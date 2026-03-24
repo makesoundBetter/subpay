@@ -22,6 +22,10 @@ app.register(rateLimit, {
   errorResponseBuilder: () => ({ error: 'Too many requests, please try again later' }),
 })
 
+// Экранирование HTML для Telegram-сообщений
+const escapeHtml = (text: string) =>
+  text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+
 // Admin API key middleware
 const adminAuth = async (request: any, reply: any) => {
   const key = request.headers['x-admin-key']
@@ -82,7 +86,7 @@ app.post('/orders', { config: { rateLimit: { max: 5, timeWindow: '1 minute' } } 
   const order = await prisma.order.create({
     data: {
       userId: user.id,
-      serviceId,
+      serviceId: Number(serviceId),
       duration,
       totalPrice,
       status: isCrypto ? 'AWAITING_PAYMENT' : 'NEW',
@@ -131,12 +135,12 @@ app.post('/orders', { config: { rateLimit: { max: 5, timeWindow: '1 minute' } } 
       await bot.api.sendMessage(
         adminId,
         `📦 <b>Новая заявка #${order.id}</b>\n\n` +
-        `👤 ${firstName}${username ? ` (@${username})` : ''}\n` +
-        `📱 Сервис: ${serviceName}\n` +
-        `⏱ Период: ${duration}\n` +
+        `👤 ${escapeHtml(firstName)}${username ? ` (@${escapeHtml(username)})` : ''}\n` +
+        `📱 Сервис: ${escapeHtml(serviceName)}\n` +
+        `⏱ Период: ${escapeHtml(duration)}\n` +
         `💰 Сумма: $${totalPrice}` +
         paymentLine +
-        (comment ? `\n\n💬 Комментарий: ${comment}` : ''),
+        (comment ? `\n\n💬 Комментарий: ${escapeHtml(comment)}` : ''),
         {
           parse_mode: 'HTML',
           reply_markup: {
