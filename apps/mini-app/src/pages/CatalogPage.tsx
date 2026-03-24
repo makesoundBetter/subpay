@@ -5,6 +5,85 @@ import { API_URL } from '../config'
 
 const G = (domain: string) => `https://www.google.com/s2/favicons?domain=${domain}&sz=64`
 
+const DOMAIN_MAP: Record<string, string> = {
+  // AI
+  'ChatGPT Plus': 'chatgpt.com',
+  'Claude Pro': 'claude.ai',
+  'Midjourney': 'midjourney.com',
+  'Suno AI': 'suno.ai',
+  'Gamma AI': 'gamma.app',
+  'DeepSeek': 'deepseek.com',
+  'Cursor AI': 'cursor.sh',
+  'Krea AI': 'krea.ai',
+  'OpenAI API': 'openai.com',
+  'Kling AI': 'klingai.com',
+  'Freepik Premium': 'freepik.com',
+  'Runway AI': 'runwayml.com',
+  'ElevenLabs': 'elevenlabs.io',
+  'Candy AI': 'candy.ai',
+  'Lensa AI': 'prisma-ai.com',
+  'Higgsfield AI': 'higgsfield.ai',
+  'Google Gemini Adv.': 'gemini.google.com',
+  'Perplexity Pro': 'perplexity.ai',
+  'Grok Premium': 'x.ai',
+  // Social
+  'YouTube Premium': 'youtube.com',
+  'Discord Nitro': 'discord.com',
+  'Pixiv Fanbox': 'fanbox.cc',
+  'Ko-fi': 'ko-fi.com',
+  // Design
+  'Canva Pro': 'canva.com',
+  'CapCut Pro': 'capcut.com',
+  'Adobe Creative': 'adobe.com',
+  'Fotor Pro': 'fotor.com',
+  // Dev
+  'GitHub Copilot': 'github.com',
+  'Vercel Pro': 'vercel.com',
+  'DigitalOcean': 'digitalocean.com',
+  'TradingView': 'tradingview.com',
+  'JetBrains': 'jetbrains.com',
+  'Obsidian': 'obsidian.md',
+  // Cloud
+  'Google Workspace': 'workspace.google.com',
+  'Google One': 'one.google.com',
+  'Zoom Pro': 'zoom.us',
+  'Microsoft 365': 'microsoft.com',
+  'Apple ID': 'apple.com',
+  'Google Play': 'play.google.com',
+  // Travel
+  'Airalo eSIM': 'airalo.com',
+  'Booking.com': 'booking.com',
+  // Home
+  'iCloud+': 'icloud.com',
+  'NordVPN': 'nordvpn.com',
+  'Surfshark': 'surfshark.com',
+  'ExpressVPN': 'expressvpn.com',
+  'ProtonVPN': 'protonvpn.com',
+  '1Password': '1password.com',
+  // Streaming
+  'Disney+': 'disneyplus.com',
+  'HBO Max': 'max.com',
+  'Apple TV+': 'apple.com',
+  'Apple Music': 'music.apple.com',
+  'Kinopoisk HD': 'kinopoisk.ru',
+  'Amazon Prime': 'amazon.com',
+  'Crunchyroll': 'crunchyroll.com',
+  // Gaming
+  'Xbox Game Pass': 'xbox.com',
+  'PlayStation Plus': 'playstation.com',
+  'EA Play': 'ea.com',
+  'Nintendo Switch': 'nintendo.com',
+  'Epic Games': 'epicgames.com',
+  // Education
+  'Duolingo Plus': 'duolingo.com',
+  'Quizlet Plus': 'quizlet.com',
+  'Todoist Pro': 'todoist.com',
+  'GeoGuessr': 'geoguessr.com',
+  'Chess.com': 'chess.com',
+  'Notion': 'notion.so',
+  'Grammarly': 'grammarly.com',
+}
+
 const CATEGORY_META: Record<string, { name: string; icon: any }> = {
   ai:        { name: 'ИИ-сервисы',   icon: Sparkles },
   streaming: { name: 'Стриминг',      icon: Tv2 },
@@ -48,7 +127,7 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
             id: s.id,
             name: s.name,
             category: cat.slug,
-            icon: s.imageUrl ?? G(s.name.toLowerCase().replace(/\s+/g, '') + '.com'),
+            icon: s.imageUrl ?? G(DOMAIN_MAP[s.name] ?? (s.name.toLowerCase().replace(/\s+/g, '') + '.com')),
             prices: s.prices.map((p: any) => ({ duration: p.duration, total: p.total })),
           }))
         )
