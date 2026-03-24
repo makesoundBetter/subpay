@@ -20,7 +20,7 @@ export type SelectedService = {
 }
 
 function App() {
-  const [welcomed, setWelcomed] = useState(false)
+  const [welcomed, setWelcomed] = useState(() => sessionStorage.getItem('welcomed') === '1')
 
   useEffect(() => {
     const tg = (window as any).Telegram?.WebApp
@@ -44,10 +44,42 @@ function App() {
     setPage('orders')
   }
 
+  const handleWelcomeDone = () => {
+    sessionStorage.setItem('welcomed', '1')
+    setWelcomed(true)
+  }
+
+  const goBack = () => {
+    if (cryptoPayment) {
+      setCryptoPayment(null)
+      setPage('catalog')
+    } else if (selectedService) {
+      setSelectedService(null)
+    } else if (page !== 'catalog') {
+      setPage('catalog')
+    }
+  }
+
+  // Telegram BackButton: show on sub-pages, handle back navigation
+  useEffect(() => {
+    const tg = (window as any).Telegram?.WebApp
+    if (!tg?.BackButton) return
+
+    const isSubPage = !!cryptoPayment || !!selectedService || page !== 'catalog'
+
+    if (isSubPage) {
+      tg.BackButton.show()
+      tg.BackButton.onClick(goBack)
+      return () => tg.BackButton.offClick(goBack)
+    } else {
+      tg.BackButton.hide()
+    }
+  }, [selectedService, page, cryptoPayment])
+
   return (
     <AppRoot>
       <div className="app">
-        {!welcomed && <WelcomePage onDone={() => setWelcomed(true)} />}
+        {!welcomed && <WelcomePage onDone={handleWelcomeDone} />}
 
         {cryptoPayment ? (
           <CryptoPaymentPage
