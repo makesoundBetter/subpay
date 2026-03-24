@@ -115,9 +115,11 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
   const [services, setServices] = useState<SelectedService[]>([])
   const [categories, setCategories] = useState<{ slug: string; name: string; icon: any }[]>([])
   const [loadError, setLoadError] = useState(false)
-  const touchStartX = useRef<number>(0)
-  const touchStartY = useRef<number>(0)
   const categoriesRef = useRef<HTMLDivElement>(null)
+  const activeCategoryRef = useRef(activeCategory)
+  const categoriesListRef = useRef(categories)
+  activeCategoryRef.current = activeCategory
+  categoriesListRef.current = categories
 
   useEffect(() => {
     fetch(`${API_URL}/services`)
@@ -163,21 +165,32 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
     })
   }, [activeCategory])
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX
-    touchStartY.current = e.touches[0].clientY
-  }
+  useEffect(() => {
+    if (isSearching) return
+    let startX = 0
+    let startY = 0
 
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    const dx = e.changedTouches[0].clientX - touchStartX.current
-    const dy = e.changedTouches[0].clientY - touchStartY.current
-    if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy)) return
-    if (dx < 0 && currentIndex < categories.length - 1) {
-      setActiveCategory(categories[currentIndex + 1].slug)
-    } else if (dx > 0 && currentIndex > 0) {
-      setActiveCategory(categories[currentIndex - 1].slug)
+    const onStart = (e: TouchEvent) => {
+      startX = e.touches[0].clientX
+      startY = e.touches[0].clientY
     }
-  }
+    const onEnd = (e: TouchEvent) => {
+      const dx = e.changedTouches[0].clientX - startX
+      const dy = e.changedTouches[0].clientY - startY
+      if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy)) return
+      const cats = categoriesListRef.current
+      const idx = cats.findIndex(c => c.slug === activeCategoryRef.current)
+      if (dx < 0 && idx < cats.length - 1) setActiveCategory(cats[idx + 1].slug)
+      else if (dx > 0 && idx > 0) setActiveCategory(cats[idx - 1].slug)
+    }
+
+    document.addEventListener('touchstart', onStart, { passive: true })
+    document.addEventListener('touchend', onEnd, { passive: true })
+    return () => {
+      document.removeEventListener('touchstart', onStart)
+      document.removeEventListener('touchend', onEnd)
+    }
+  }, [isSearching])
 
   if (loadError) return (
     <div className="page" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
@@ -189,7 +202,7 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
   )
 
   return (
-    <div className="page" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+    <div className="page">
       <div className="header">
         <h1>Subpay Service</h1>
         <div className="header-btns">
