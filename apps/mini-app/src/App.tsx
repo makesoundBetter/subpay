@@ -81,6 +81,14 @@ function App() {
       <div className="app">
         {!welcomed && <WelcomePage onDone={handleWelcomeDone} />}
 
+        <div style={{ display: (!cryptoPayment && !selectedService && page === 'catalog') ? '' : 'none' }}>
+          <CatalogPage
+            onSelectService={setSelectedService}
+            onGoToOrders={() => setPage('orders')}
+            onHowItWorks={() => setPage('how')}
+          />
+        </div>
+
         {cryptoPayment ? (
           <CryptoPaymentPage
             orderId={cryptoPayment.orderId}
@@ -94,17 +102,11 @@ function App() {
             onBack={() => setSelectedService(null)}
             onCryptoPayment={handleCryptoPayment}
           />
-        ) : page === 'catalog' ? (
-          <CatalogPage
-            onSelectService={setSelectedService}
-            onGoToOrders={() => setPage('orders')}
-            onHowItWorks={() => setPage('how')}
-          />
         ) : page === 'how' ? (
           <HowItWorksPage onBack={() => setPage('catalog')} />
-        ) : (
+        ) : page === 'orders' ? (
           <MyOrdersPage onBack={() => setPage('catalog')} />
-        )}
+        ) : null}
       </div>
     </AppRoot>
   )
