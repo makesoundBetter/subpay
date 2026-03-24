@@ -296,6 +296,22 @@ async function main() {
   await prisma.service.upsert({ where: { id: 70 }, update: {}, create: { id: 70, categoryId: payment.id, name: 'Любой сервис', prices: { create: [{ duration: 'До $50', basePrice: 46, commission: 9, total: 55 }, { duration: 'До $100', basePrice: 90, commission: 18, total: 108 }, { duration: 'До $200', basePrice: 179, commission: 36, total: 215 }] } } })
   await prisma.service.upsert({ where: { id: 71 }, update: {}, create: { id: 71, categoryId: payment.id, name: 'Stripe', prices: { create: [{ duration: 'Оплата', basePrice: 21, commission: 4, total: 25 }] } } })
 
+  // Merge: move all services from 'games' category into 'gaming'
+  const gamesCat = await prisma.category.findUnique({ where: { slug: 'games' } })
+  const gamingCat = await prisma.category.findUnique({ where: { slug: 'gaming' } })
+  if (gamesCat && gamingCat) {
+    await prisma.service.updateMany({
+      where: { categoryId: gamesCat.id },
+      data: { categoryId: gamingCat.id },
+    })
+  }
+
+  // Disable "Любой сервис"
+  await prisma.service.updateMany({
+    where: { name: 'Любой сервис' },
+    data: { isActive: false },
+  })
+
   console.log('Seed completed!')
 }
 

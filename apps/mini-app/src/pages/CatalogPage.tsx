@@ -68,6 +68,11 @@ const DOMAIN_MAP: Record<string, string> = {
   'Kinopoisk HD': 'kinopoisk.ru',
   'Amazon Prime': 'amazon.com',
   'Crunchyroll': 'crunchyroll.com',
+  // Other
+  'Steam': 'store.steampowered.com',
+  'Авиабилеты': 'aviasales.ru',
+  'itch.io': 'itch.io',
+  'Stripe': 'stripe.com',
   // Gaming
   'Xbox Game Pass': 'xbox.com',
   'PlayStation Plus': 'playstation.com',

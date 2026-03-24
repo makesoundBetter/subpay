@@ -64,7 +64,7 @@ app.get('/services', async () => {
     },
     orderBy: { id: 'asc' },
   })
-  return categories
+  return categories.filter(c => c.services.length > 0)
 })
 
 // Проверка Content-Type для POST/PATCH запросов (защита от form-based CSRF)
