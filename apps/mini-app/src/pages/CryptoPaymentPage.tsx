@@ -26,7 +26,7 @@ export default function CryptoPaymentPage({ orderId, payment, onBack, onPaid }: 
           clearInterval(pollRef.current!)
           setStatus('cancelled')
         }
-      } catch (e) {}
+      } catch (_e) {}
     }, 5000)
     return () => clearInterval(pollRef.current!)
   }, [orderId])

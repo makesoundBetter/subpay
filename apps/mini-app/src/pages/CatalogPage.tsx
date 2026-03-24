@@ -36,7 +36,7 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
 
   useEffect(() => {
     fetch(`${API_URL}/services`)
-      .then(r => r.json())
+      .then(r => { if (!r.ok) throw new Error(String(r.status)); return r.json() })
       .then((data: any[]) => {
         const cats = data.map(cat => ({
           slug: cat.slug,

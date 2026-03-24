@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { MANAGER_URL } from '../config'
+import { MANAGER_URL, API_URL } from '../config'
 
 type Order = {
   id: number
@@ -31,9 +31,15 @@ export default function MyOrdersPage({ onBack }: Props) {
 
   useEffect(() => {
     const tg = (window as any).Telegram?.WebApp
-    const telegramId = tg?.initDataUnsafe?.user?.id ?? 'test_user'
+    const telegramId = tg?.initDataUnsafe?.user?.id
 
-    fetch(`${import.meta.env.VITE_API_URL}/orders/${telegramId}`)
+    if (!telegramId) {
+      setError('Откройте приложение через Telegram')
+      setLoading(false)
+      return
+    }
+
+    fetch(`${API_URL}/orders/${telegramId}`)
       .then(r => { if (!r.ok) throw new Error(String(r.status)); return r.json() })
       .then(data => setOrders(data))
       .catch(() => setError('Не удалось загрузить заявки'))

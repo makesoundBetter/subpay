@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { SelectedService } from '../App'
-import { MANAGER_URL } from '../config'
+import { MANAGER_URL, API_URL } from '../config'
 
 type Props = {
   service: SelectedService
@@ -37,7 +37,7 @@ export default function OrderPage({ service, onBack, onCryptoPayment }: Props) {
         return
       }
 
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/orders`, {
+      const res = await fetch(`${API_URL}/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -64,6 +64,8 @@ export default function OrderPage({ service, onBack, onCryptoPayment }: Props) {
           totalUsd: selectedPrice.total,
           serviceName: service.name,
         })
+      } else if (paymentMethod === 'CRYPTO') {
+        setError('Не удалось создать счёт для оплаты. Попробуйте позже.')
       } else {
         setSubmitted(true)
       }
