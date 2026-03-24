@@ -49,12 +49,7 @@ export default function MyOrdersPage({ onBack }: Props) {
   return (
     <div className="page">
       <div className="back-header" style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-        <a
-          href={MANAGER_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="manager-link"
-        >
+        <a href={MANAGER_URL} target="_blank" rel="noopener noreferrer" className="manager-link">
           Менеджер
         </a>
       </div>
@@ -71,29 +66,27 @@ export default function MyOrdersPage({ onBack }: Props) {
       )}
 
       <div className="orders-list">
-        {orders.map(order => (
-          <div key={order.id} className="order-card">
-            <div className="order-card-row">
-              <span className="order-id">Заявка #{order.id}</span>
-              {(() => {
-                const s = STATUS_CONFIG[order.status] ?? { label: order.status, bg: '#111', border: '#333', dot: '#666' }
-                return (
-                  <span className="order-status-badge" style={{ background: s.bg, border: `1px solid ${s.border}` }}>
-                    <span className="order-status-dot" style={{ background: s.dot, boxShadow: `0 0 6px ${s.dot}` }} />
-                    {s.label}
-                  </span>
-                )
-              })()}
+        {orders.map(order => {
+          const s = STATUS_CONFIG[order.status] ?? { label: order.status, bg: '#111', border: '#333', dot: '#666' }
+          return (
+            <div key={order.id} className="order-card">
+              <div className="order-card-row">
+                <span className="order-id">Заявка #{order.id}</span>
+                <span className="order-status-badge" style={{ background: s.bg, border: `1px solid ${s.border}` }}>
+                  <span className="order-status-dot" style={{ background: s.dot, boxShadow: `0 0 6px ${s.dot}` }} />
+                  {s.label}
+                </span>
+              </div>
+              <div className="order-card-row">
+                <span className="order-duration">{order.service?.name ?? `Сервис #${order.serviceId}`} · {order.duration}</span>
+                <span className="order-price">${order.totalPrice}</span>
+              </div>
+              <div className="order-date">
+                {new Date(order.createdAt).toLocaleDateString('ru-RU', { timeZone: 'UTC' })}
+              </div>
             </div>
-            <div className="order-card-row">
-              <span className="order-duration">{order.service?.name ?? `Сервис #${order.serviceId}`} · {order.duration}</span>
-              <span className="order-price">${order.totalPrice}</span>
-            </div>
-            <div className="order-date">
-              {new Date(order.createdAt).toLocaleDateString('ru-RU', { timeZone: 'UTC' })}
-            </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </div>
   )
