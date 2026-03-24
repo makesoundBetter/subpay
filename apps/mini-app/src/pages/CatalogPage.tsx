@@ -117,6 +117,7 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
   const [loadError, setLoadError] = useState(false)
   const touchStartX = useRef<number>(0)
   const touchStartY = useRef<number>(0)
+  const categoriesRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     fetch(`${API_URL}/services`)
@@ -150,6 +151,17 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
       )
     : services.filter(s => s.category === activeCategory)
   const currentIndex = categories.findIndex(c => c.slug === activeCategory)
+
+  useEffect(() => {
+    const container = categoriesRef.current
+    if (!container) return
+    const active = container.querySelector('.cat-btn.active') as HTMLElement
+    if (!active) return
+    container.scrollTo({
+      left: active.offsetLeft - container.offsetWidth / 2 + active.offsetWidth / 2,
+      behavior: 'smooth',
+    })
+  }, [activeCategory])
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX
@@ -199,7 +211,7 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
         )}
       </div>
 
-      {!isSearching && <div className="categories">
+      {!isSearching && <div className="categories" ref={categoriesRef}>
         {categories.map(cat => (
           <button
             key={cat.slug}
