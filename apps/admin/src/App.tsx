@@ -77,13 +77,13 @@ export default function App() {
 
   return (
     <div className="layout">
-      {view.type === 'orders' && (
+      <div style={{ display: view.type === 'orders' ? '' : 'none' }}>
         <OrdersPage
           apiKey={apiKey}
           onSelectUser={(id) => setView({ type: 'user', telegramId: id })}
           onUnauthorized={logout}
         />
-      )}
+      </div>
       {view.type === 'user' && (
         <UserPage
           apiKey={apiKey}
