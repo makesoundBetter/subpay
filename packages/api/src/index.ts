@@ -6,6 +6,30 @@ import { PrismaClient } from '@prisma/client'
 import { Bot } from 'grammy'
 import { createPayment, verifyWebhook, CRYPTO_CURRENCIES } from './cryptomus.js'
 
+// Типы для тел запросов
+interface CreateOrderBody {
+  telegramId: string | number
+  firstName: string
+  username?: string
+  serviceId: number
+  serviceName: string
+  duration: string
+  totalPrice: number
+  comment?: string
+  paymentMethod: string
+  cryptoCurrency?: string
+}
+
+interface UpdateStatusBody {
+  status: string
+}
+
+interface WebhookBody {
+  order_id: string
+  payment_status: string
+  payment_id?: string
+}
+
 // Проверка обязательных env-переменных при старте
 const REQUIRED_ENV = ['BOT_TOKEN', 'ADMIN_TELEGRAM_ID', 'ADMIN_API_KEY', 'DATABASE_URL']
 for (const key of REQUIRED_ENV) {
@@ -74,7 +98,7 @@ app.get('/health', async () => {
 
 // Создать заявку
 app.post('/orders', { config: { rateLimit: { max: 5, timeWindow: '1 minute' } } }, async (request, reply) => {
-  const { telegramId, firstName, username, serviceId, serviceName, duration, totalPrice, comment, paymentMethod, cryptoCurrency } = request.body as any
+  const { telegramId, firstName, username, serviceId, serviceName, duration, totalPrice, comment, paymentMethod, cryptoCurrency } = request.body as CreateOrderBody
 
   // Валидация обязательных полей
   if (!telegramId || !firstName || !serviceId || !duration || totalPrice === undefined || totalPrice === null) {
@@ -195,7 +219,7 @@ app.post('/orders', { config: { rateLimit: { max: 5, timeWindow: '1 minute' } } 
 
 // Статус платежа по заявке
 app.get('/orders/:orderId/payment', async (request) => {
-  const { orderId } = request.params as any
+  const { orderId } = request.params as Record<string, string>
   const order = await prisma.order.findUnique({
     where: { id: parseInt(orderId, 10) },
     select: {
@@ -221,7 +245,7 @@ app.post('/webhooks/nowpayments', { config: { rawBody: true } }, async (request,
     return reply.code(401).send({ error: 'Invalid signature' })
   }
 
-  const body = request.body as any
+  const body = request.body as WebhookBody
   const orderId = parseInt(body.order_id, 10)
   const paymentStatus = body.payment_status
 
@@ -286,7 +310,7 @@ app.post('/webhooks/nowpayments', { config: { rawBody: true } }, async (request,
 
 // Получить заявки пользователя
 app.get('/orders/:telegramId', async (request) => {
-  const { telegramId } = request.params as any
+  const { telegramId } = request.params as Record<string, string>
 
   const user = await prisma.user.findUnique({
     where: { telegramId: String(telegramId) },
@@ -322,7 +346,7 @@ app.get('/admin/orders/all', { preHandler: adminAuth }, async () => {
 
 // Профиль пользователя со всеми заявками (для админ-панели)
 app.get('/admin/users/:telegramId', { preHandler: adminAuth }, async (request) => {
-  const { telegramId } = request.params as any
+  const { telegramId } = request.params as Record<string, string>
   const user = await prisma.user.findUnique({
     where: { telegramId: String(telegramId) },
     include: {
@@ -337,8 +361,8 @@ app.get('/admin/users/:telegramId', { preHandler: adminAuth }, async (request) =
 
 // Обновить статус заявки (для бота)
 app.patch('/admin/orders/:id/status', { preHandler: adminAuth }, async (request) => {
-  const { id } = request.params as any
-  const { status } = request.body as any
+  const { id } = request.params as Record<string, string>
+  const { status } = request.body as UpdateStatusBody
 
   const order = await prisma.order.update({
     where: { id: parseInt(id, 10) },

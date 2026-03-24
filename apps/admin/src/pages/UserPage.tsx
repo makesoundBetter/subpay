@@ -83,7 +83,7 @@ export default function UserPage({ apiKey, telegramId, onBack, onUnauthorized }:
           </div>
           <div className="user-profile-field">
             <label>Клиент с</label>
-            <span>{new Date(user.createdAt).toLocaleDateString('ru-RU')}</span>
+            <span>{new Date(user.createdAt).toLocaleDateString('ru-RU', { timeZone: 'UTC' })}</span>
           </div>
           <div className="user-profile-field">
             <label>Всего заказов</label>
@@ -103,7 +103,7 @@ export default function UserPage({ apiKey, telegramId, onBack, onUnauthorized }:
             {ordersWithComments.map(o => (
               <div key={o.id} style={{ background: '#1a1a1a', borderRadius: '8px', padding: '12px 14px', borderLeft: '3px solid #FFE000' }}>
                 <div style={{ fontSize: '12px', color: '#666', marginBottom: '6px' }}>
-                  #{o.id} · {o.service?.name ?? '—'} · {new Date(o.createdAt).toLocaleDateString('ru-RU')}
+                  #{o.id} · {o.service?.name ?? '—'} · {new Date(o.createdAt).toLocaleDateString('ru-RU', { timeZone: 'UTC' })}
                 </div>
                 <div style={{ color: '#f0f0f0', fontSize: '14px' }}>{o.notes}</div>
               </div>
@@ -147,7 +147,7 @@ export default function UserPage({ apiKey, telegramId, onBack, onUnauthorized }:
                     ))}
                   </select>
                 </td>
-                <td>{new Date(order.createdAt).toLocaleDateString('ru-RU')}</td>
+                <td>{new Date(order.createdAt).toLocaleDateString('ru-RU', { timeZone: 'UTC' })}</td>
               </tr>
             ))}
           </tbody>

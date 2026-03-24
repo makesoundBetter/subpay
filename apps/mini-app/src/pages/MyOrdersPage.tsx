@@ -85,7 +85,7 @@ export default function MyOrdersPage({ onBack }: Props) {
               <span className="order-price">${order.totalPrice}</span>
             </div>
             <div className="order-date">
-              {new Date(order.createdAt).toLocaleDateString('ru-RU')}
+              {new Date(order.createdAt).toLocaleDateString('ru-RU', { timeZone: 'UTC' })}
             </div>
           </div>
         ))}

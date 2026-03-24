@@ -111,7 +111,7 @@ export default function OrdersPage({ apiKey, onSelectUser, onUnauthorized }: { a
                     ))}
                   </select>
                 </td>
-                <td>{new Date(order.createdAt).toLocaleDateString('ru-RU')}</td>
+                <td>{new Date(order.createdAt).toLocaleDateString('ru-RU', { timeZone: 'UTC' })}</td>
               </tr>
             ))}
           </tbody>

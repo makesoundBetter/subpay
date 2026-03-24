@@ -10,7 +10,7 @@ const adminApiKey = process.env.ADMIN_API_KEY || ''
 
 const bot = new Bot(token)
 
-const isAdmin = (ctx: any) => String(ctx.from?.id) === adminTelegramId
+const isAdmin = (ctx: any) => ctx.from?.id != null && String(ctx.from.id) === adminTelegramId
 
 const statusLabel: Record<string, string> = {
   NEW: '🆕 Новая',
