@@ -9,29 +9,16 @@ type Props = {
 }
 
 export type CryptoPaymentData = {
-  paymentId: string
-  address: string
-  amount: string
-  currency: string
-  cryptoCurrency: string
+  invoiceId: number
+  payUrl: string
   totalUsd: number
   serviceName: string
 }
-
-const COINS = [
-  { key: 'TON',        label: 'TON',        icon: '💎' },
-  { key: 'USDT_TRC20', label: 'USDT TRC20', icon: '💵' },
-  { key: 'USDT_ERC20', label: 'USDT ERC20', icon: '💵' },
-  { key: 'ETH',        label: 'ETH',        icon: '🔷' },
-  { key: 'USDC',       label: 'USDC',       icon: '🔵' },
-  { key: 'SOL',        label: 'SOL',        icon: '🟣' },
-]
 
 export default function OrderPage({ service, onBack, onCryptoPayment }: Props) {
   const [selectedPrice, setSelectedPrice] = useState(service.prices[0])
   const [comment, setComment] = useState('')
   const [paymentMethod, setPaymentMethod] = useState<'TRANSFER' | 'CRYPTO'>('TRANSFER')
-  const [cryptoCurrency, setCryptoCurrency] = useState('TON')
   const [loading, setLoading] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
@@ -63,7 +50,6 @@ export default function OrderPage({ service, onBack, onCryptoPayment }: Props) {
           totalPrice: selectedPrice.total,
           comment: comment.trim() || null,
           paymentMethod,
-          cryptoCurrency: paymentMethod === 'CRYPTO' ? cryptoCurrency : null,
         }),
       })
 
@@ -73,8 +59,8 @@ export default function OrderPage({ service, onBack, onCryptoPayment }: Props) {
 
       if (paymentMethod === 'CRYPTO' && data.paymentData) {
         onCryptoPayment(data.orderId, {
-          ...data.paymentData,
-          cryptoCurrency,
+          invoiceId: data.paymentData.invoiceId,
+          payUrl: data.paymentData.payUrl,
           totalUsd: selectedPrice.total,
           serviceName: service.name,
         })
@@ -156,24 +142,6 @@ export default function OrderPage({ service, onBack, onCryptoPayment }: Props) {
           </button>
         </div>
 
-        {paymentMethod === 'CRYPTO' && (
-          <>
-            <div className="section-title" style={{ marginTop: 16 }}>Выберите монету</div>
-            <div className="coin-grid">
-              {COINS.map(coin => (
-                <div
-                  key={coin.key}
-                  className={`coin-card ${cryptoCurrency === coin.key ? 'active' : ''}`}
-                  onClick={() => setCryptoCurrency(coin.key)}
-                >
-                  <span className="coin-icon">{coin.icon}</span>
-                  <span className="coin-label">{coin.label}</span>
-                </div>
-              ))}
-            </div>
-          </>
-        )}
-
         <div className="section-title" style={{ marginTop: 20 }}>Комментарий (необязательно)</div>
         <textarea
           className="order-comment"
@@ -192,7 +160,7 @@ export default function OrderPage({ service, onBack, onCryptoPayment }: Props) {
 
         <p className="order-note">
           {paymentMethod === 'CRYPTO'
-            ? 'После нажатия вы получите адрес кошелька для оплаты криптой. Оплата подтверждается автоматически.'
+            ? 'После нажатия откроется страница оплаты CryptoBot. Вы сможете выбрать удобную криптовалюту. Оплата подтверждается автоматически.'
             : 'После отправки заявки менеджер свяжется с вами, уточнит детали и пришлёт реквизиты для оплаты.'}
         </p>
       </div>

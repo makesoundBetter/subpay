@@ -4,7 +4,7 @@ import cors from '@fastify/cors'
 import rateLimit from '@fastify/rate-limit'
 import { PrismaClient } from '@prisma/client'
 import { Bot } from 'grammy'
-import { createPayment, verifyWebhook, CRYPTO_CURRENCIES } from './cryptomus.js'
+import { createInvoice, verifyWebhook, setWebhook } from './cryptobot.js'
 
 // Типы для тел запросов
 interface CreateOrderBody {
@@ -17,21 +17,14 @@ interface CreateOrderBody {
   totalPrice: number
   comment?: string
   paymentMethod: string
-  cryptoCurrency?: string
 }
 
 interface UpdateStatusBody {
   status: string
 }
 
-interface WebhookBody {
-  order_id: string
-  payment_status: string
-  payment_id?: string
-}
-
 // Проверка обязательных env-переменных при старте
-const REQUIRED_ENV = ['BOT_TOKEN', 'ADMIN_TELEGRAM_ID', 'ADMIN_API_KEY', 'DATABASE_URL']
+const REQUIRED_ENV = ['BOT_TOKEN', 'ADMIN_TELEGRAM_ID', 'ADMIN_API_KEY', 'DATABASE_URL', 'CRYPTOBOT_API_TOKEN']
 for (const key of REQUIRED_ENV) {
   if (!process.env[key]) {
     console.error(`Missing required env variable: ${key}`)
@@ -98,7 +91,7 @@ app.get('/health', async () => {
 
 // Создать заявку
 app.post('/orders', { config: { rateLimit: { max: 5, timeWindow: '1 minute' } } }, async (request, reply) => {
-  const { telegramId, firstName, username, serviceId, serviceName, duration, totalPrice, comment, paymentMethod, cryptoCurrency } = request.body as CreateOrderBody
+  const { telegramId, firstName, username, serviceId, serviceName, duration, totalPrice, comment, paymentMethod } = request.body as CreateOrderBody
 
   // Валидация обязательных полей
   if (!telegramId || !firstName || !serviceId || !duration || totalPrice === undefined || totalPrice === null) {
@@ -108,11 +101,6 @@ app.post('/orders', { config: { rateLimit: { max: 5, timeWindow: '1 minute' } } 
   // Валидация цены
   if (typeof totalPrice !== 'number' || totalPrice <= 0) {
     return reply.code(400).send({ error: 'Invalid totalPrice' })
-  }
-
-  // Валидация cryptoCurrency
-  if (paymentMethod === 'CRYPTO' && !CRYPTO_CURRENCIES[cryptoCurrency as string]) {
-    return reply.code(400).send({ error: 'Invalid cryptoCurrency' })
   }
 
   // Проверяем что сервис существует и активен
@@ -150,37 +138,30 @@ app.post('/orders', { config: { rateLimit: { max: 5, timeWindow: '1 minute' } } 
       status: isCrypto ? 'AWAITING_PAYMENT' : 'NEW',
       notes: comment || null,
       paymentMethod: paymentMethod || 'TRANSFER',
-      cryptoCurrency: isCrypto ? cryptoCurrency : null,
     },
   })
 
   let paymentData = null
 
-  if (isCrypto && cryptoCurrency) {
+  if (isCrypto) {
     try {
-      const coin = CRYPTO_CURRENCIES[cryptoCurrency]
-      const webhookUrl = `${process.env.API_URL}/webhooks/nowpayments`
-      const payment = await createPayment({
+      const invoice = await createInvoice({
         orderId: order.id,
         amountUsd: totalPrice,
-        payCurrency: coin.code,
-        webhookUrl,
         description: `${serviceName} - ${duration}`,
       })
 
       await prisma.order.update({
         where: { id: order.id },
         data: {
-          paymentId: payment.paymentId,
-          paymentAddress: payment.address,
-          paymentAmount: payment.amount,
-          cryptoCurrency: payment.currency,
+          paymentId: String(invoice.invoiceId),
+          paymentAddress: invoice.payUrl,
         },
       })
 
-      paymentData = payment
+      paymentData = invoice
     } catch (e) {
-      app.log.error('Failed to create NOWPayments payment: ' + e)
+      app.log.error('Failed to create CryptoBot invoice: ' + e)
     }
   }
 
@@ -188,7 +169,7 @@ app.post('/orders', { config: { rateLimit: { max: 5, timeWindow: '1 minute' } } 
   if (adminId) {
     try {
       const paymentLine = isCrypto
-        ? `\n💳 Оплата: Крипта (${cryptoCurrency})`
+        ? `\n💳 Оплата: CryptoBot`
         : `\n💳 Оплата: Перевод менеджеру`
       await bot.api.sendMessage(
         adminId,
@@ -236,74 +217,67 @@ app.get('/orders/:orderId/payment', async (request) => {
   return order
 })
 
-// Webhook от NOWPayments
-app.post('/webhooks/nowpayments', { config: { rawBody: true } }, async (request, reply) => {
-  const signature = (request.headers['x-nowpayments-sig'] as string) || ''
+// Webhook от CryptoBot
+app.post('/webhooks/cryptobot', { config: { rawBody: true } }, async (request, reply) => {
+  const signature = (request.headers['crypto-pay-api-signature'] as string) || ''
   const rawBody = (request as any).rawBody as string
 
   if (!verifyWebhook(rawBody, signature)) {
-    app.log.warn(`Webhook signature mismatch from IP ${request.ip}`)
+    app.log.warn(`CryptoBot webhook signature mismatch from IP ${request.ip}`)
     return reply.code(401).send({ error: 'Invalid signature' })
   }
 
-  const body = request.body as WebhookBody
-  const orderId = parseInt(body.order_id, 10)
-  const paymentStatus = body.payment_status
+  const body = request.body as any
+
+  if (body.update_type !== 'invoice_paid') return { ok: true }
+
+  const invoice = body.payload
+  const orderId = parseInt(invoice.payload, 10)
 
   if (!orderId || isNaN(orderId)) {
-    return reply.code(400).send({ error: 'Invalid order_id' })
+    return reply.code(400).send({ error: 'Invalid order payload' })
   }
 
-  // NOWPayments statuses: waiting → confirming → confirmed → sending → partially_paid → finished → failed → refunded → expired
-  if (['finished', 'confirmed'].includes(paymentStatus)) {
-    // updateMany с условием на статус — идемпотентность + защита от race condition:
-    // если заказ уже PAID/COMPLETED/CANCELLED — обновление не произойдёт (count = 0)
-    const { count } = await prisma.order.updateMany({
-      where: { id: orderId, status: { in: ['AWAITING_PAYMENT'] } },
-      data: { status: 'PAID' },
+  // updateMany с условием на статус — идемпотентность + защита от race condition
+  const { count } = await prisma.order.updateMany({
+    where: { id: orderId, status: { in: ['AWAITING_PAYMENT'] } },
+    data: { status: 'PAID' },
+  })
+
+  // Уведомления отправляем только если статус реально изменился
+  if (count > 0) {
+    const order = await prisma.order.findUnique({
+      where: { id: orderId },
+      include: { user: true, service: true },
     })
 
-    // Уведомления отправляем только если статус реально изменился
-    if (count > 0) {
-      const order = await prisma.order.findUnique({
-        where: { id: orderId },
-        include: { user: true, service: true },
-      })
-
-      const adminId = process.env.ADMIN_TELEGRAM_ID
-      if (adminId && order) {
-        try {
-          await bot.api.sendMessage(
-            adminId,
-            `✅ *Оплачено! Заявка #${order.id}*\n\n` +
-            `👤 ${order.user.firstName}\n` +
-            `📱 ${order.service?.name ?? '—'}\n` +
-            `💰 $${order.totalPrice} (${order.cryptoCurrency})`,
-            { parse_mode: 'Markdown' }
-          )
-        } catch (e) {
-          app.log.error('Failed to notify admin about payment: ' + e)
-        }
-      }
-
-      if (order) {
-        try {
-          await bot.api.sendMessage(
-            order.user.telegramId,
-            `✅ *Оплата подтверждена!*\n\nВаша заявка #${order.id} оплачена. Менеджер приступит к выполнению.`,
-            { parse_mode: 'Markdown' }
-          )
-        } catch (e) {
-          app.log.error('Failed to notify user about payment: ' + e)
-        }
+    const adminId = process.env.ADMIN_TELEGRAM_ID
+    if (adminId && order) {
+      try {
+        await bot.api.sendMessage(
+          adminId,
+          `✅ <b>Оплачено! Заявка #${order.id}</b>\n\n` +
+          `👤 ${escapeHtml(order.user.firstName)}\n` +
+          `📱 ${escapeHtml(order.service?.name ?? '—')}\n` +
+          `💰 $${order.totalPrice} (CryptoBot)`,
+          { parse_mode: 'HTML' }
+        )
+      } catch (e) {
+        app.log.error('Failed to notify admin about payment: ' + e)
       }
     }
-  } else if (['failed', 'expired'].includes(paymentStatus)) {
-    // Только если заказ ещё не финализирован
-    await prisma.order.updateMany({
-      where: { id: orderId, status: { in: ['AWAITING_PAYMENT'] } },
-      data: { status: 'CANCELLED' },
-    })
+
+    if (order) {
+      try {
+        await bot.api.sendMessage(
+          order.user.telegramId,
+          `✅ <b>Оплата подтверждена!</b>\n\nВаша заявка #${order.id} оплачена. Менеджер приступит к выполнению.`,
+          { parse_mode: 'HTML' }
+        )
+      } catch (e) {
+        app.log.error('Failed to notify user about payment: ' + e)
+      }
+    }
   }
 
   return { ok: true }
@@ -394,6 +368,15 @@ const start = async () => {
   } catch (err) {
     app.log.error('Failed to connect to database: ' + err)
     process.exit(1)
+  }
+
+  if (process.env.API_URL) {
+    try {
+      await setWebhook(`${process.env.API_URL}/webhooks/cryptobot`)
+      app.log.info('CryptoBot webhook registered')
+    } catch (e) {
+      app.log.error('Failed to set CryptoBot webhook: ' + e)
+    }
   }
 
   try {
