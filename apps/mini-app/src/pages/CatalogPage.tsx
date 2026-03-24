@@ -212,7 +212,7 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
         ))}
       </div>}
 
-      <div className="services" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+      <div className="services" key={isSearching ? 'search' : activeCategory} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
         {filtered.map(service => (
           <div key={service.id} className="service-card" onClick={() => onSelectService(service)}>
             <img
