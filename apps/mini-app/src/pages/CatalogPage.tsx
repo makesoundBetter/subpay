@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useLayoutEffect } from 'react'
 import { Sparkles, Tv2, Gamepad2, MessageCircle, Palette, Code2, Cloud, Plane, Shield, GraduationCap, CreditCard } from 'lucide-react'
 import type { SelectedService } from '../App'
 import { API_URL } from '../config'
@@ -187,8 +187,8 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
     container.scrollTo({ left: target, behavior: 'smooth' })
   }, [activeCategory, categories])
 
-  // Reset track position when category changes via button tap
-  useEffect(() => {
+  // Reset track position synchronously before paint — prevents flicker after swipe
+  useLayoutEffect(() => {
     const track = swipeTrackRef.current
     if (!track) return
     track.style.transition = 'none'
@@ -299,19 +299,11 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
       if (offset < -threshold && idx < cats.length - 1) {
         const next = cats[idx + 1].slug
         snapCatsScroll(idx + 1)
-        snapTo('translateX(-66.666%)', () => {
-          swipeTrackRef.current!.style.transition = 'none'
-          swipeTrackRef.current!.style.transform = 'translateX(-33.333%)'
-          setActiveCategory(next)
-        })
+        snapTo('translateX(-66.666%)', () => setActiveCategory(next))
       } else if (offset > threshold && idx > 0) {
         const prev = cats[idx - 1].slug
         snapCatsScroll(idx - 1)
-        snapTo('translateX(0%)', () => {
-          swipeTrackRef.current!.style.transition = 'none'
-          swipeTrackRef.current!.style.transform = 'translateX(-33.333%)'
-          setActiveCategory(prev)
-        })
+        snapTo('translateX(0%)', () => setActiveCategory(prev))
       } else {
         snapCatsScroll(idx)
         snapTo('translateX(-33.333%)')
