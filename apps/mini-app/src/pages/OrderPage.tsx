@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { SelectedService } from '../App'
-import { MANAGER_URL, API_URL } from '../config'
+import { API_URL } from '../config'
 
 type Props = {
   service: SelectedService
@@ -18,9 +18,8 @@ export type CryptoPaymentData = {
 export default function OrderPage({ service, onBack, onCryptoPayment }: Props) {
   const [selectedPrice, setSelectedPrice] = useState(service.prices[0] ?? null)
   const [comment, setComment] = useState('')
-  const [paymentMethod, setPaymentMethod] = useState<'TRANSFER' | 'CRYPTO'>('TRANSFER')
+  const paymentMethod = 'CRYPTO'
   const [loading, setLoading] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
 
   const handleSubmit = async () => {
@@ -57,17 +56,15 @@ export default function OrderPage({ service, onBack, onCryptoPayment }: Props) {
 
       const data = await res.json()
 
-      if (paymentMethod === 'CRYPTO' && data.paymentData) {
+      if (data.paymentData) {
         onCryptoPayment(data.orderId, {
           invoiceId: data.paymentData.invoiceId,
           payUrl: data.paymentData.payUrl,
           totalUsd: selectedPrice.total,
           serviceName: service.name,
         })
-      } else if (paymentMethod === 'CRYPTO') {
-        setError('Не удалось создать счёт для оплаты. Попробуйте позже.')
       } else {
-        setSubmitted(true)
+        setError('Не удалось создать счёт для оплаты. Попробуйте позже.')
       }
     } catch (e) {
       setError('Не удалось отправить заявку. Попробуйте позже.')
@@ -81,27 +78,6 @@ export default function OrderPage({ service, onBack, onCryptoPayment }: Props) {
       <div className="page center">
         <p style={{ color: '#888' }}>Нет доступных тарифов для этого сервиса.</p>
         <button className="btn-primary" onClick={onBack}>Назад</button>
-      </div>
-    )
-  }
-
-  if (submitted) {
-    return (
-      <div className="page center">
-        <h2 style={{ display: 'flex', alignItems: 'center', gap: 10, color: '#ffffff' }}>
-          <span className="order-status-dot" style={{ background: '#00bfff', boxShadow: '0 0 8px #00bfff', width: 12, height: 12, flexShrink: 0 }} />
-          Заявка отправлена!
-        </h2>
-        <p style={{ color: '#ffffff' }}>Менеджер обработает заявку и свяжется с вами для оплаты.</p>
-        <a
-          className="btn-manager"
-          href={MANAGER_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Написать менеджеру
-        </a>
-        <button className="btn-primary" onClick={onBack}>На главную</button>
       </div>
     )
   }
@@ -133,22 +109,6 @@ export default function OrderPage({ service, onBack, onCryptoPayment }: Props) {
           <span className="total-amount">${selectedPrice.total}</span>
         </div>
 
-        <div className="section-title" style={{ marginTop: 20 }}>Способ оплаты</div>
-        <div className="payment-method-toggle">
-          <button
-            className={`payment-method-btn ${paymentMethod === 'TRANSFER' ? 'active' : ''}`}
-            onClick={() => setPaymentMethod('TRANSFER')}
-          >
-            💳 Перевод
-          </button>
-          <button
-            className={`payment-method-btn ${paymentMethod === 'CRYPTO' ? 'active' : ''}`}
-            onClick={() => setPaymentMethod('CRYPTO')}
-          >
-            ₿ Крипта
-          </button>
-        </div>
-
         <div className="section-title" style={{ marginTop: 20 }}>Комментарий (необязательно)</div>
         <textarea
           className="order-comment"
@@ -162,13 +122,11 @@ export default function OrderPage({ service, onBack, onCryptoPayment }: Props) {
         {error && <p className="error-msg">{error}</p>}
 
         <button className="btn-primary" onClick={handleSubmit} disabled={loading}>
-          {loading ? 'Отправляем...' : paymentMethod === 'CRYPTO' ? 'Перейти к оплате' : 'Отправить заявку'}
+          {loading ? 'Отправляем...' : 'Перейти к оплате'}
         </button>
 
         <p className="order-note">
-          {paymentMethod === 'CRYPTO'
-            ? 'После нажатия откроется страница оплаты CryptoBot. Вы сможете выбрать удобную криптовалюту. Оплата подтверждается автоматически.'
-            : 'После отправки заявки менеджер свяжется с вами, уточнит детали и пришлёт реквизиты для оплаты.'}
+          После нажатия откроется страница оплаты CryptoBot. Вы сможете выбрать удобную криптовалюту. Оплата подтверждается автоматически.
         </p>
       </div>
     </div>
