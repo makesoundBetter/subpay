@@ -117,9 +117,20 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
   const [loadError, setLoadError] = useState(false)
   const categoriesRef = useRef<HTMLDivElement>(null)
   const pageRef = useRef<HTMLDivElement>(null)
+  const swipeTrackRef = useRef<HTMLDivElement>(null)
   const activeCategoryRef = useRef(activeCategory)
   const categoriesListRef = useRef(categories)
   const isSearchingRef = useRef(false)
+
+  const dragRef = useRef({
+    startX: 0,
+    startY: 0,
+    dragging: false,
+    decided: false,
+    isHorizontal: false,
+    offset: 0,
+  })
+
   activeCategoryRef.current = activeCategory
   categoriesListRef.current = categories
 
@@ -150,12 +161,21 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
 
   const isSearching = search.trim().length > 0
   isSearchingRef.current = isSearching
+
+  const catIdx = categories.findIndex(c => c.slug === activeCategory)
+  const prevCatSlug = catIdx > 0 ? categories[catIdx - 1].slug : null
+  const nextCatSlug = catIdx < categories.length - 1 ? categories[catIdx + 1].slug : null
+
+  const getFiltered = (catSlug: string | null) =>
+    catSlug ? services.filter(s => s.category === catSlug) : []
+
   const filtered = isSearching
     ? services.filter(s =>
         s.name?.toLowerCase().split(/\s+/).some(word => word.startsWith(search.toLowerCase()))
       )
-    : services.filter(s => s.category === activeCategory)
+    : []
 
+  // Scroll category bar to active button
   useEffect(() => {
     const container = categoriesRef.current
     if (!container) return
@@ -164,36 +184,141 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
     active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
   }, [activeCategory])
 
+  // Reset track position when category changes via button tap
+  useEffect(() => {
+    const track = swipeTrackRef.current
+    if (!track) return
+    track.style.transition = 'none'
+    track.style.transform = 'translateX(-33.333%)'
+  }, [activeCategory])
+
+  // Swipe gesture: sliding panels like phone home screen
   useEffect(() => {
     const el = pageRef.current
     if (!el) return
-    let startX = 0
-    let startY = 0
 
-    let startedInCategories = false
-    const onStart = (e: TouchEvent) => {
-      startX = e.touches[0].clientX
-      startY = e.touches[0].clientY
-      startedInCategories = !!(categoriesRef.current?.contains(e.target as Node))
+    const snapTo = (target: string, onDone?: () => void) => {
+      const track = swipeTrackRef.current
+      if (!track) return
+      track.style.transition = 'transform 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+      track.style.transform = target
+      if (onDone) {
+        track.addEventListener('transitionend', onDone, { once: true })
+      }
     }
-    const onEnd = (e: TouchEvent) => {
-      if (isSearchingRef.current || startedInCategories) return
-      const dx = e.changedTouches[0].clientX - startX
-      const dy = e.changedTouches[0].clientY - startY
-      if (Math.abs(dx) < 30 || Math.abs(dx) < Math.abs(dy)) return
+
+    const onStart = (e: TouchEvent) => {
+      if (isSearchingRef.current) return
+      if (categoriesRef.current?.contains(e.target as Node)) return
+      dragRef.current = {
+        startX: e.touches[0].clientX,
+        startY: e.touches[0].clientY,
+        dragging: true,
+        decided: false,
+        isHorizontal: false,
+        offset: 0,
+      }
+    }
+
+    const onMove = (e: TouchEvent) => {
+      if (!dragRef.current.dragging) return
+
+      const dx = e.touches[0].clientX - dragRef.current.startX
+      const dy = e.touches[0].clientY - dragRef.current.startY
+
+      if (!dragRef.current.decided) {
+        if (Math.abs(dx) < 5 && Math.abs(dy) < 5) return
+        dragRef.current.decided = true
+        dragRef.current.isHorizontal = Math.abs(dx) >= Math.abs(dy)
+        if (!dragRef.current.isHorizontal) {
+          dragRef.current.dragging = false
+          return
+        }
+      }
+
+      if (!dragRef.current.isHorizontal) return
+
+      e.preventDefault()
+
       const cats = categoriesListRef.current
       const idx = cats.findIndex(c => c.slug === activeCategoryRef.current)
-      if (dx < 0 && idx < cats.length - 1) setActiveCategory(cats[idx + 1].slug)
-      else if (dx > 0 && idx > 0) setActiveCategory(cats[idx - 1].slug)
+      // Rubber band at edges
+      let offset = dx
+      if ((idx === 0 && dx > 0) || (idx === cats.length - 1 && dx < 0)) {
+        offset = dx * 0.2
+      }
+
+      dragRef.current.offset = offset
+
+      const track = swipeTrackRef.current
+      if (!track) return
+      track.style.transition = 'none'
+      track.style.transform = `translateX(calc(-33.333% + ${offset}px))`
+    }
+
+    const onEnd = () => {
+      if (!dragRef.current.dragging) return
+      dragRef.current.dragging = false
+      if (!dragRef.current.isHorizontal) return
+
+      const offset = dragRef.current.offset
+      const cats = categoriesListRef.current
+      const idx = cats.findIndex(c => c.slug === activeCategoryRef.current)
+      const threshold = window.innerWidth * 0.25
+
+      if (offset < -threshold && idx < cats.length - 1) {
+        const next = cats[idx + 1].slug
+        snapTo('translateX(-66.666%)', () => {
+          swipeTrackRef.current!.style.transition = 'none'
+          swipeTrackRef.current!.style.transform = 'translateX(-33.333%)'
+          setActiveCategory(next)
+        })
+      } else if (offset > threshold && idx > 0) {
+        const prev = cats[idx - 1].slug
+        snapTo('translateX(0%)', () => {
+          swipeTrackRef.current!.style.transition = 'none'
+          swipeTrackRef.current!.style.transform = 'translateX(-33.333%)'
+          setActiveCategory(prev)
+        })
+      } else {
+        snapTo('translateX(-33.333%)')
+      }
     }
 
     el.addEventListener('touchstart', onStart, { passive: true })
+    el.addEventListener('touchmove', onMove, { passive: false })
     el.addEventListener('touchend', onEnd, { passive: true })
+    el.addEventListener('touchcancel', onEnd, { passive: true })
     return () => {
       el.removeEventListener('touchstart', onStart)
+      el.removeEventListener('touchmove', onMove)
       el.removeEventListener('touchend', onEnd)
+      el.removeEventListener('touchcancel', onEnd)
     }
   }, [])
+
+  const renderPanel = (catSlug: string | null) => {
+    const items = getFiltered(catSlug)
+    return (
+      <div className="services" style={{ animation: 'none' }}>
+        {items.map(service => (
+          <div key={service.id} className="service-card" onClick={() => onSelectService(service)}>
+            <img
+              className="service-icon"
+              src={service.icon}
+              alt={service.name}
+              onError={(e) => { (e.target as HTMLImageElement).style.opacity = '0.3' }}
+            />
+            <div className="service-info">
+              <div className="service-name">{service.name}</div>
+              <div className="service-price">от ${service.prices[0].total}</div>
+            </div>
+            <span className="arrow">›</span>
+          </div>
+        ))}
+      </div>
+    )
+  }
 
   if (loadError) return (
     <div className="page" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
@@ -227,36 +352,62 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
         )}
       </div>
 
-      {!isSearching && <div className="categories" ref={categoriesRef}>
-        {categories.map(cat => (
-          <button
-            key={cat.slug}
-            className={`cat-btn ${activeCategory === cat.slug ? 'active' : ''}`}
-            onClick={() => setActiveCategory(cat.slug)}
-          >
-            <cat.icon size={14} />
-            {cat.name}
-          </button>
-        ))}
-      </div>}
+      {!isSearching && (
+        <div className="categories" ref={categoriesRef}>
+          {categories.map(cat => (
+            <button
+              key={cat.slug}
+              className={`cat-btn ${activeCategory === cat.slug ? 'active' : ''}`}
+              onClick={() => setActiveCategory(cat.slug)}
+            >
+              <cat.icon size={14} />
+              {cat.name}
+            </button>
+          ))}
+        </div>
+      )}
 
-      <div className="services" key={isSearching ? 'search' : activeCategory}>
-        {filtered.map(service => (
-          <div key={service.id} className="service-card" onClick={() => onSelectService(service)}>
-            <img
-              className="service-icon"
-              src={service.icon}
-              alt={service.name}
-              onError={(e) => { (e.target as HTMLImageElement).style.opacity = '0.3' }}
-            />
-            <div className="service-info">
-              <div className="service-name">{service.name}</div>
-              <div className="service-price">от ${service.prices[0].total}</div>
+      {isSearching ? (
+        <div className="services" key="search">
+          {filtered.map(service => (
+            <div key={service.id} className="service-card" onClick={() => onSelectService(service)}>
+              <img
+                className="service-icon"
+                src={service.icon}
+                alt={service.name}
+                onError={(e) => { (e.target as HTMLImageElement).style.opacity = '0.3' }}
+              />
+              <div className="service-info">
+                <div className="service-name">{service.name}</div>
+                <div className="service-price">от ${service.prices[0].total}</div>
+              </div>
+              <span className="arrow">›</span>
             </div>
-            <span className="arrow">›</span>
+          ))}
+        </div>
+      ) : (
+        <div style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
+          <div
+            ref={swipeTrackRef}
+            style={{
+              display: 'flex',
+              width: '300%',
+              height: '100%',
+              transform: 'translateX(-33.333%)',
+              willChange: 'transform',
+            }}
+          >
+            {([prevCatSlug, activeCategory, nextCatSlug] as (string | null)[]).map((slug, i) => (
+              <div
+                key={i}
+                style={{ flex: '0 0 33.333%', height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
+              >
+                {renderPanel(slug)}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      )}
     </div>
   )
 }
