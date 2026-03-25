@@ -170,12 +170,14 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
     let startX = 0
     let startY = 0
 
+    let startedInCategories = false
     const onStart = (e: TouchEvent) => {
       startX = e.touches[0].clientX
       startY = e.touches[0].clientY
+      startedInCategories = !!(categoriesRef.current?.contains(e.target as Node))
     }
     const onEnd = (e: TouchEvent) => {
-      if (isSearchingRef.current) return
+      if (isSearchingRef.current || startedInCategories) return
       const dx = e.changedTouches[0].clientX - startX
       const dy = e.changedTouches[0].clientY - startY
       if (Math.abs(dx) < 30 || Math.abs(dx) < Math.abs(dy)) return
