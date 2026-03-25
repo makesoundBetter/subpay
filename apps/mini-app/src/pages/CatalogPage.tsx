@@ -175,14 +175,17 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
       )
     : []
 
-  // Scroll category bar to active button
+  // Scroll category bar to active button (only on tap, not swipe — swipe uses snapCatsScroll)
   useEffect(() => {
     const container = categoriesRef.current
     if (!container) return
-    const active = container.querySelector('.cat-btn.active') as HTMLElement
-    if (!active) return
-    active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
-  }, [activeCategory])
+    const buttons = Array.from(container.querySelectorAll('.cat-btn')) as HTMLElement[]
+    const idx = categories.findIndex(c => c.slug === activeCategory)
+    const btn = buttons[idx]
+    if (!btn) return
+    const target = Math.max(0, btn.offsetLeft - (container.clientWidth - btn.offsetWidth) / 2)
+    container.scrollTo({ left: target, behavior: 'smooth' })
+  }, [activeCategory, categories])
 
   // Reset track position when category changes via button tap
   useEffect(() => {
@@ -220,6 +223,31 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
       }
     }
 
+    const getCenterScroll = (btn: HTMLElement, container: HTMLElement) =>
+      Math.max(0, btn.offsetLeft - (container.clientWidth - btn.offsetWidth) / 2)
+
+    const syncCatsScroll = (idx: number, offset: number) => {
+      const container = categoriesRef.current
+      if (!container) return
+      const buttons = Array.from(container.querySelectorAll('.cat-btn')) as HTMLElement[]
+      const currentBtn = buttons[idx]
+      if (!currentBtn) return
+      const neighborBtn = offset < 0 ? buttons[idx + 1] : buttons[idx - 1]
+      const fromScroll = getCenterScroll(currentBtn, container)
+      const toScroll = neighborBtn ? getCenterScroll(neighborBtn, container) : fromScroll
+      const progress = Math.min(1, Math.abs(offset) / window.innerWidth)
+      container.scrollLeft = fromScroll + (toScroll - fromScroll) * progress
+    }
+
+    const snapCatsScroll = (targetIdx: number) => {
+      const container = categoriesRef.current
+      if (!container) return
+      const buttons = Array.from(container.querySelectorAll('.cat-btn')) as HTMLElement[]
+      const btn = buttons[targetIdx]
+      if (!btn) return
+      container.scrollTo({ left: getCenterScroll(btn, container), behavior: 'smooth' })
+    }
+
     const onMove = (e: TouchEvent) => {
       if (!dragRef.current.dragging) return
 
@@ -254,6 +282,8 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
       if (!track) return
       track.style.transition = 'none'
       track.style.transform = `translateX(calc(-33.333% + ${offset}px))`
+
+      syncCatsScroll(idx, offset)
     }
 
     const onEnd = () => {
@@ -268,6 +298,7 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
 
       if (offset < -threshold && idx < cats.length - 1) {
         const next = cats[idx + 1].slug
+        snapCatsScroll(idx + 1)
         snapTo('translateX(-66.666%)', () => {
           swipeTrackRef.current!.style.transition = 'none'
           swipeTrackRef.current!.style.transform = 'translateX(-33.333%)'
@@ -275,12 +306,14 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
         })
       } else if (offset > threshold && idx > 0) {
         const prev = cats[idx - 1].slug
+        snapCatsScroll(idx - 1)
         snapTo('translateX(0%)', () => {
           swipeTrackRef.current!.style.transition = 'none'
           swipeTrackRef.current!.style.transform = 'translateX(-33.333%)'
           setActiveCategory(prev)
         })
       } else {
+        snapCatsScroll(idx)
         snapTo('translateX(-33.333%)')
       }
     }
