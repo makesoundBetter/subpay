@@ -11,6 +11,8 @@ type Props = {
 export default function CryptoPaymentPage({ orderId, payment, onBack, onPaid }: Props) {
   const [status, setStatus] = useState<'waiting' | 'paid' | 'cancelled'>('waiting')
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const onPaidRef = useRef(onPaid)
+  onPaidRef.current = onPaid
 
   useEffect(() => {
     pollRef.current = setInterval(async () => {
@@ -21,7 +23,7 @@ export default function CryptoPaymentPage({ orderId, payment, onBack, onPaid }: 
         if (data.status === 'PAID' || data.status === 'COMPLETED') {
           clearInterval(pollRef.current!)
           setStatus('paid')
-          setTimeout(onPaid, 2000)
+          setTimeout(() => onPaidRef.current(), 2000)
         } else if (data.status === 'CANCELLED') {
           clearInterval(pollRef.current!)
           setStatus('cancelled')

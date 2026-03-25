@@ -336,7 +336,7 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
             />
             <div className="service-info">
               <div className="service-name">{service.name}</div>
-              <div className="service-price">от ${service.prices[0].total}</div>
+              <div className="service-price">от ${service.prices[0]?.total ?? '?'}</div>
             </div>
             <span className="arrow">›</span>
           </div>
@@ -404,7 +404,7 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
               />
               <div className="service-info">
                 <div className="service-name">{service.name}</div>
-                <div className="service-price">от ${service.prices[0].total}</div>
+                <div className="service-price">от ${service.prices[0]?.total ?? '?'}</div>
               </div>
               <span className="arrow">›</span>
             </div>

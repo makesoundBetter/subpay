@@ -3,9 +3,7 @@ import './index.css'
 import OrdersPage from './pages/OrdersPage'
 import UserPage from './pages/UserPage'
 
-const API = import.meta.env.VITE_API_URL
-if (!API) console.warn('[admin] VITE_API_URL is not set, falling back to localhost:3000')
-const API_URL = API || 'http://localhost:3000'
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
 export type View =
   | { type: 'orders' }

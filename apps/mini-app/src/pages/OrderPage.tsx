@@ -16,7 +16,7 @@ export type CryptoPaymentData = {
 }
 
 export default function OrderPage({ service, onBack, onCryptoPayment }: Props) {
-  const [selectedPrice, setSelectedPrice] = useState(service.prices[0])
+  const [selectedPrice, setSelectedPrice] = useState(service.prices[0] ?? null)
   const [comment, setComment] = useState('')
   const [paymentMethod, setPaymentMethod] = useState<'TRANSFER' | 'CRYPTO'>('TRANSFER')
   const [loading, setLoading] = useState(false)
@@ -74,6 +74,15 @@ export default function OrderPage({ service, onBack, onCryptoPayment }: Props) {
     } finally {
       setLoading(false)
     }
+  }
+
+  if (!selectedPrice) {
+    return (
+      <div className="page center">
+        <p style={{ color: '#888' }}>Нет доступных тарифов для этого сервиса.</p>
+        <button className="btn-primary" onClick={onBack}>Назад</button>
+      </div>
+    )
   }
 
   if (submitted) {

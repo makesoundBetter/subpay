@@ -297,8 +297,8 @@ app.get('/orders/:telegramId', async (request) => {
     },
   })
 
-  return user?.orders ?? []
   // Возвращаем пустой массив если пользователь не найден — это нормально для новых юзеров
+  return user?.orders ?? []
 })
 
 // Получить активные заявки (для бота)
@@ -348,9 +348,13 @@ app.get('/admin/users/:telegramId', { preHandler: adminAuth }, async (request, r
 })
 
 // Обновить статус заявки (для бота)
-app.patch('/admin/orders/:id/status', { preHandler: adminAuth }, async (request) => {
+app.patch('/admin/orders/:id/status', { preHandler: adminAuth }, async (request, reply) => {
   const { id } = request.params as Record<string, string>
   const { status } = request.body as UpdateStatusBody
+
+  if (!Object.values(OrderStatus).includes(status as OrderStatus)) {
+    return reply.code(400).send({ error: 'Invalid status' })
+  }
 
   const order = await prisma.order.update({
     where: { id: parseInt(id, 10) },

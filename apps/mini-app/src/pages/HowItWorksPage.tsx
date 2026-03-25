@@ -1,6 +1,4 @@
-type Props = {
-  onBack: () => void
-}
+type Props = { onBack: () => void }
 
 const STEPS = [
   {
@@ -39,7 +37,7 @@ const FAQ = [
   },
 ]
 
-export default function HowItWorksPage({ onBack: _onBack }: Props) {
+export default function HowItWorksPage(_props: Props) {
   return (
     <div className="page">
       <div className="how-scroll">
