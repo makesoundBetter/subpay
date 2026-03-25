@@ -204,7 +204,10 @@ bot.callbackQuery(/^cancel_(\d+)$/, async (ctx) => {
 bot.api.setMyCommands([
   { command: 'start', description: '🚀 Открыть Subpay Service' },
   { command: 'help', description: '📖 Помощь и как это работает' },
-])
+]).catch(e => console.error('[bot] setMyCommands failed:', e.message))
 
-bot.start()
+bot.start().catch(e => {
+  console.error('[bot] Fatal error:', e.message)
+  process.exit(1)
+})
 console.log('[bot] Started')
