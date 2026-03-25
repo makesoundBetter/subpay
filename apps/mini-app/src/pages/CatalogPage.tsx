@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useLayoutEffect } from 'react'
-import { Sparkles, Tv2, Gamepad2, MessageCircle, Palette, Code2, Cloud, Plane, Shield, GraduationCap, CreditCard } from 'lucide-react'
+import { Sparkles, Tv2, Gamepad2, MessageCircle, Palette, Code2, Cloud, Plane, Shield, GraduationCap, Package } from 'lucide-react'
 import type { SelectedService } from '../App'
 import { API_URL } from '../config'
 
@@ -91,17 +91,19 @@ const DOMAIN_MAP: Record<string, string> = {
 
 const CATEGORY_META: Record<string, { name: string; icon: any }> = {
   ai:        { name: 'ИИ-сервисы',   icon: Sparkles },
-  streaming: { name: 'Стриминг',      icon: Tv2 },
-  gaming:    { name: 'Игры',          icon: Gamepad2 },
   social:    { name: 'Соц. сети',     icon: MessageCircle },
   design:    { name: 'Дизайн',        icon: Palette },
+  gaming:    { name: 'Игры',          icon: Gamepad2 },
+  streaming: { name: 'Стриминг',      icon: Tv2 },
   dev:       { name: 'Разработка',    icon: Code2 },
   cloud:     { name: 'Облако',        icon: Cloud },
   travel:    { name: 'Путешествия',   icon: Plane },
   home:      { name: 'Дом и VPN',     icon: Shield },
   education: { name: 'Обучение',      icon: GraduationCap },
-  payment:   { name: 'Оплата',        icon: CreditCard },
+  other:     { name: 'Другое',        icon: Package },
 }
+
+const CATEGORY_ORDER = ['ai', 'social', 'design', 'gaming', 'streaming', 'dev', 'cloud', 'travel', 'home', 'education', 'other']
 
 type Props = {
   onSelectService: (service: SelectedService) => void
@@ -138,11 +140,17 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
     fetch(`${API_URL}/services`)
       .then(r => { if (!r.ok) throw new Error(String(r.status)); return r.json() })
       .then((data: any[]) => {
-        const cats = data.map(cat => ({
-          slug: cat.slug,
-          name: CATEGORY_META[cat.slug]?.name ?? cat.name,
-          icon: CATEGORY_META[cat.slug]?.icon ?? Sparkles,
-        }))
+        const cats = data
+          .map(cat => ({
+            slug: cat.slug,
+            name: CATEGORY_META[cat.slug]?.name ?? cat.name,
+            icon: CATEGORY_META[cat.slug]?.icon ?? Sparkles,
+          }))
+          .sort((a, b) => {
+            const ai = CATEGORY_ORDER.indexOf(a.slug)
+            const bi = CATEGORY_ORDER.indexOf(b.slug)
+            return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi)
+          })
         const svcs: SelectedService[] = data.flatMap(cat =>
           cat.services.map((s: any) => ({
             id: s.id,
