@@ -81,7 +81,7 @@ function App() {
       <div className="app">
         {!welcomed && <WelcomePage onDone={handleWelcomeDone} />}
 
-        <div style={{ display: (!cryptoPayment && !selectedService && page === 'catalog') ? '' : 'none' }}>
+        <div style={{ display: (!cryptoPayment && !selectedService && page === 'catalog') ? 'flex' : 'none', flex: 1, minHeight: 0, flexDirection: 'column' }}>
           <CatalogPage
             onSelectService={setSelectedService}
             onGoToOrders={() => setPage('orders')}

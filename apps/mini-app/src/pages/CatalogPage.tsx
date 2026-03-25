@@ -119,10 +119,9 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
   const pageRef = useRef<HTMLDivElement>(null)
   const activeCategoryRef = useRef(activeCategory)
   const categoriesListRef = useRef(categories)
-  const isSearchingRef = useRef(isSearching)
+  const isSearchingRef = useRef(false)
   activeCategoryRef.current = activeCategory
   categoriesListRef.current = categories
-  isSearchingRef.current = isSearching
 
   useEffect(() => {
     fetch(`${API_URL}/services`)
@@ -150,6 +149,7 @@ export default function CatalogPage({ onSelectService, onGoToOrders, onHowItWork
   }, [])
 
   const isSearching = search.trim().length > 0
+  isSearchingRef.current = isSearching
   const filtered = isSearching
     ? services.filter(s =>
         s.name?.toLowerCase().split(/\s+/).some(word => word.startsWith(search.toLowerCase()))
